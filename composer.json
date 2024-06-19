@@ -10,6 +10,8 @@
         "laravel/framework": "^11.9",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "laravel/vapor-cli": "^1.65",
+        "laravel/vapor-core": "^2.37",
         "tightenco/ziggy": "^2.0"
     },
     "require-dev": {
