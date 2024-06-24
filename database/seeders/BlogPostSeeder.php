@@ -12,7 +12,14 @@ class BlogPostSeeder extends Seeder
 {
     public function run(): void
     {
-        $users = \App\Models\User::all();
+        $users = User::all();
+        $sampleImages = [
+            'blog1.jpg',
+            'blog2.jpg',
+            'blog3.jpg',
+            'blog4.jpg',
+            'blog5.jpg',
+        ];
 
         if ($users->count() === 0) {
             throw new UnexpectedValueException('No user record found');
@@ -28,13 +35,14 @@ class BlogPostSeeder extends Seeder
                 ]);
 
             foreach ($posts as $post) {
-                $post->copyMedia(resource_path('images/placeholder-500x350.png'))
+                // random hd image from picsum 1920x1080
+                $post->addMediaFromUrl('https://picsum.photos/1920/1080')
                     ->toMediaCollection('images');
             }
         }
 
         $user = User::first();
-        $firstPost = $user->posts()->first();
+        $firstPost = $user->posts()->last();
         $firstPost->is_published = true;
         $firstPost->published_at = now();
         $firstPost->is_featured = true;
