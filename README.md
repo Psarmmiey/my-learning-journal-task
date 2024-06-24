@@ -1,11 +1,16 @@
 # My Learning Journal 
-Can be found [here](http://35.179.77.184/)
+The Live version can be found [here](http://35.179.77.184/)
+### Login Credentials
+```bash
+Email: test@example.com
+Password: password
+```
 
 ## Introduction
 My Learning Journal is a web application that allows users to create and manage journal entries. Users can register an account, log in, and start creating journal entries with a title, body, excerpt and a cover photo. The application provides a simple and intuitive interface for users to view, edit, and delete their journal entries. Users can also draft entries, publish them, and view a list of all published entries.
+
 ## Running the Project
 The project can be run locally using Laravel's built-in development server or using Laravel Sail, a light-weight command-line interface for interacting with Laravel's default Docker development environment. The following sections provide instructions for running the project locally and using Docker Sail.
-
 
 ### Local Installation
 Requirements:
@@ -135,7 +140,7 @@ Laravel Forge is a server management and deployment platform for PHP application
 - **Vue.js**: Vue.js is a progressive JavaScript framework for building user interfaces. It provides a simple and flexible API for creating interactive web applications and components.
 - **Tailwind CSS**: Tailwind CSS is a utility-first CSS framework that provides a set of pre-built classes for styling web applications. It allows developers to quickly design responsive layouts and customize styles using a functional approach.
 - **Inertia.js**: Inertia.js is a library that allows developers to build single-page applications using server-side routing and client-side rendering. It provides a seamless experience for users by preserving the server-rendered HTML and updating the page content dynamically.
-- 
+
 ## ULID
 A ULID is a 128-bit universally unique identifier that is encoded as a 26-character string. It is designed to be used as a primary key for database tables and is well-suited for use in distributed systems.
 Why I choose ULID as the primary key for my database tables:
@@ -147,3 +152,9 @@ Why I choose ULID as the primary key for my database tables:
 - Deterministic Generation: Generating ULIDs does not require a centralized authority or coordination, as is the case with certain versions of UUIDs. This makes them easier to generate in distributed systems without worrying about contention or synchronization.
 - Consistency in Distributed Systems: Because ULIDs have a time-based component, they can lead to a more consistent ordering of events in distributed systems, making it easier to reason about causality and chronology.
 - More information about the differences between ULIDs, UUIDs and Integer can be found [here](https://blog.hassam.dev/ulid-uuid-integer-ids/).
+
+## Email Verification
+For the sake of simplicity, I have disabled email verification in the application. However, enabling email verification is a common practice in web applications to ensure that users provide a valid email address and to prevent spam or abuse. When email verification is enabled, users are required to verify their email address by clicking on a link sent to their email before they can access certain features of the application.
+
+## Conclusion
+My Learning Journal is a simple and intuitive web application that allows users to create and manage journal entries. The application provides a user-friendly interface for users to register an account, log in, and start creating journal entries with a title, body, excerpt, and cover photo. Users can draft entries, publish them, and view a list of all published entries. The application is built using Laravel, Vue.js, Tailwind CSS, and Inertia.js, and it is deployed on an AWS EC2 instance using Laravel Forge. The deployment process is automated using GitHub Actions, which triggers a deployment whenever changes are pushed to the `main` branch of the repository. My Learning Journal is a showcase of modern web development practices and technologies, and it provides a solid foundation for building more complex web applications in the future.
