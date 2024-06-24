@@ -11,6 +11,9 @@ use Illuminate\Support\Str;
 /** @mixin BlogPost */
 class BlogPostObserver
 {
+    /**
+     * Handle the BlogPost "creating" event.
+     */
     public function creating(BlogPost $blogPost): void
     {
         $blogPost->slug = $this->generateSlug($blogPost->title);
@@ -24,6 +27,9 @@ class BlogPostObserver
         }
     }
 
+    /**
+     * Handle the BlogPost "updating" event.
+     */
     public function updating(BlogPost $blogPost): void
     {
         if ($blogPost->isDirty('title')) {
@@ -50,6 +56,23 @@ class BlogPostObserver
         if ($blogPost->isDirty('is_featured') && $blogPost->is_featured) {
             BlogPost::where('is_featured', true)
                 ->update(['is_featured' => false]);
+        }
+    }
+
+    /**
+     * Handle the BlogPost "deleting" event.
+     */
+    public function deleting(BlogPost $blogPost): void
+    {
+        if ($blogPost->is_featured) {
+            $latestPost = BlogPost::where('is_published', true)
+                ->where('id', '!=', $blogPost->id)
+                ->latest('published_at')
+                ->first();
+            if ($latestPost) {
+                $latestPost->is_featured = true;
+                $latestPost->save();
+            }
         }
     }
 
