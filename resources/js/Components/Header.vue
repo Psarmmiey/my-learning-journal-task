@@ -11,7 +11,6 @@ const isMenuOpen = ref(false);
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
 };
-
 </script>
 
 <template>
@@ -23,7 +22,7 @@ const toggleMenu = () => {
                     :href="route('blog.index')"
                     class="flex items-center space-x-1">
                     <ApplicationLogo />
-                    <h1 class="text-xl font-bold">{{$page.props.appName}}</h1>
+                    <h1 class="text-xl font-bold">{{ $page.props.appName }}</h1>
                 </Link>
             </div>
 

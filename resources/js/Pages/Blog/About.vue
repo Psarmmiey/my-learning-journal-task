@@ -15,7 +15,8 @@ defineProps({
     <Head title="Home" />
     <BlogLayout>
         <section class="mx-auto bg-white px-4 py-12">
-            <div class="items-left container mx-auto flex flex-col md:flex-row items-center">
+            <div
+                class="items-left container mx-auto flex flex-col items-center md:flex-row">
                 <img
                     src="/images/bg-sample.jpg"
                     alt="Profile Picture"

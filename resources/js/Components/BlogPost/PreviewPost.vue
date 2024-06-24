@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
-import { formatDate } from '../../helpers/format.js';
+import { formatDate } from '@/helpers/format.js';
+
 defineProps({
     /**
      * The blog post to display.

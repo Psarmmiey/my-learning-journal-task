@@ -231,8 +231,11 @@ watch(filter, (value) => {
                         <option value="draft">Draft</option>
                     </select>
                     <PrimaryButton @click="showCreateTaskModal()"
-                        >New Post</PrimaryButton
-                    >
+                        >New Post
+                    </PrimaryButton>
+                </div>
+                <div v-if="postsState.data.length === 0" class="text-center py-4">
+                    <p>You have not created any posts yet.</p>
                 </div>
                 <ul>
                     <li
@@ -338,6 +341,7 @@ watch(filter, (value) => {
                     </li>
                 </ul>
 
+                <!-- Pagination -->
                 <div class="mt-4">
                     <nav class="flex items-center justify-between">
                         <div>
@@ -363,7 +367,7 @@ watch(filter, (value) => {
 
         <!--Create Post Modal-->
         <DialogModal :show="openCreatePost" @close="closeCreatePostModal">
-            <template #title> New Post </template>
+            <template #title> New Post</template>
 
             <template #content>
                 <div class="mt-4">
@@ -482,7 +486,7 @@ watch(filter, (value) => {
 
         <!--Edit Post Modal-->
         <DialogModal :show="isEditModalOpen" @close="closeEditPostModal">
-            <template #title> Edit Post </template>
+            <template #title> Edit Post</template>
 
             <template #content>
                 <div class="mt-4">
