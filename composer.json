@@ -2,7 +2,10 @@
     "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "keywords": [
+        "laravel",
+        "framework"
+    ],
     "license": "MIT",
     "require": {
         "php": "^8.2",
@@ -12,10 +15,13 @@
         "laravel/tinker": "^2.9",
         "laravel/vapor-cli": "^1.65",
         "laravel/vapor-core": "^2.37",
-        "tightenco/ziggy": "^2.0"
+        "spatie/laravel-medialibrary": "^11.7",
+        "tightenco/ziggy": "^2.0",
+        "fakerphp/faker": "^1.23"
     },
     "require-dev": {
-        "fakerphp/faker": "^1.23",
+        "barryvdh/laravel-debugbar": "^3.13",
+        "barryvdh/laravel-ide-helper": "^3.0",
         "laravel/breeze": "^2.1",
         "laravel/pint": "^1.13",
         "laravel/sail": "^1.26",

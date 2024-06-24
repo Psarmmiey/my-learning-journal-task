@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 test('registration screen can be rendered', function () {
     $response = $this->get('/register');
 
@@ -15,5 +17,5 @@ test('new users can register', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('blog.index', absolute: false));
 });
