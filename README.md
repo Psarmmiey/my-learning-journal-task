@@ -50,7 +50,13 @@ DB_DATABASE=
 DB_USERNAME=
 DB_PASSWORD=
 ```
-8. Run the database migrations:
+
+To use Sqlite, update the `.env` file with the following configuration:
+```bash
+DB_CONNECTION=sqlite
+DB_DATABASE=/path/to/database.sqlite
+````
+8. Run the database migrations and seed the database with sample data:
 ```bash
 php artisan migrate --seed 
 ```
@@ -110,8 +116,8 @@ cp .env.example .env
 10. You can now register a new account, log in, and start creating journal entries.
 11. An example user with the following credentials has been seeded into the database:
 ```bash
-Email:
-Password:
+Email: test@example.com
+Password: password
 ```
 
 ## Deployment

@@ -90,8 +90,7 @@ const toggleMenu = () => {
                                     </DropdownLink>
                                     <DropdownLink
                                         :href="route('logout')"
-                                        method="post"
-                                        as="button">
+                                        method="post">
                                         Log Out
                                     </DropdownLink>
                                 </template>
