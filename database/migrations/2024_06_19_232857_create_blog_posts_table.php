@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('body');
             $table->boolean('is_published')->default(false);
             $table->dateTime('published_at')->nullable();
+            $table->boolean('is_featured')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
