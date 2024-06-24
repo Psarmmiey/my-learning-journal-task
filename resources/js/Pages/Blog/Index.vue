@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, reactive, ref, watch } from 'vue';
+import { onMounted, reactive, ref } from 'vue';
 import PreviewPost from '@/Components/BlogPost/PreviewPost.vue';
 import { Head, router } from '@inertiajs/vue3';
 import BlogLayout from '@/Layouts/BlogLayout.vue';
@@ -16,9 +16,31 @@ const props = defineProps({
         required: true,
     },
 });
+
 const blogPostsState = reactive(props.blogPosts);
 const loadMoreButton = ref(null);
 
+/**
+ * Fetch blog posts
+ * typedef {Function} fetchBlogPosts
+ */
+
+/**
+ * @typedef {Object} blogPostsState
+ * @property {Array} data
+ * @property {Object} meta
+ * @property {string} meta.next_cursor
+ * @property {string} meta.prev_cursor
+ */
+
+/**
+ * define blogPosts
+ * @type {(function(): *)|*} blogPosts
+ * @property {Array} blogPosts.data
+ * @property {Object} blogPosts.meta
+ * @property {string} blogPosts.meta.next_cursor
+ * @property {string} blogPosts.meta.prev_cursor
+ */
 const fetchBlogPosts = () => {
     router.reload({
         data: {
@@ -31,15 +53,6 @@ const fetchBlogPosts = () => {
         },
     });
 };
-
-watch(
-    () => blogPostsState.meta.next_cursor,
-    (newValue) => {
-        if (newValue === null) {
-            // loadMoreButton.value.remove()
-        }
-    },
-);
 
 onMounted(() => {
     if (props.blogPosts.meta.prev_cursor) {
@@ -83,27 +96,6 @@ onMounted(() => {
                     </div>
                 </div>
         </Link>
-
-<!--        <div class="relative" v-if="featuredPost?.data">-->
-<!--            <img-->
-<!--                :src="featuredPost.data.image"-->
-<!--                alt="Banner"-->
-<!--                class="h-96 w-full object-cover" />-->
-<!--            <div-->
-<!--                class="lg:max-w-1/2 absolute bottom-0 left-0 bg-black bg-opacity-20 p-4">-->
-<!--                <div class="text-white lg:px-12">-->
-<!--                    <p class="mb-2 text-sm">-->
-<!--                        {{ formatDate(featuredPost.data.published_at) }}-->
-<!--                    </p>-->
-<!--                    <h2 class="mb-4 text-4xl font-bold">-->
-<!--                        {{ featuredPost.data.title }}-->
-<!--                    </h2>-->
-<!--                    <p class="text-lg lg:break-words">-->
-<!--                        {{ featuredPost.data.excerpt }}-->
-<!--                    </p>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
 
         <!-- Blog Posts -->
         <div class="container mx-auto px-4 py-12">
