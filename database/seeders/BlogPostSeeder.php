@@ -47,13 +47,11 @@ class BlogPostSeeder extends Seeder
                 try {
                     $post->addMediaFromUrl('https://picsum.photos/1920/1080')
                         ->toMediaCollection('images');
-                } catch (FileCannotBeAdded | FileDoesNotExist | FileIsTooBig $e) {
+                } catch (FileCannotBeAdded|FileDoesNotExist|FileIsTooBig $e) {
                     $post->addMediaFromDisk(
-                        storage_path('app/public/' . $sampleImages[array_rand($sampleImages)])
+                        storage_path('app/public/'.$sampleImages[array_rand($sampleImages)])
                     )->toMediaCollection('images');
                 }
-//                $post->addMediaFromUrl('https://picsum.photos/1920/1080')
-//                    ->toMediaCollection('images');
             }
         }
 

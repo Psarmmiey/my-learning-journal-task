@@ -45,24 +45,23 @@ const fetchBlogPosts = () => {
         data: {
             blogPosts: blogPostsState.meta.next_cursor,
         },
-        preserveState: true,
-        onSuccess: (page) => {
-            blogPostsState.data.push(...page.props.blogPosts.data);
-            blogPostsState.meta = page.props.blogPosts.meta;
+        onSuccess: () => {
+            blogPostsState.data.push(...props.blogPosts.data);
+           blogPostsState.meta = props.blogPosts.meta;
         },
     });
 };
 
 onMounted(() => {
     if (props.blogPosts.meta.prev_cursor) {
-        router.replace({
+        router.reload({
             data: {
-                blogPosts: props.blogPosts.meta.prev_cursor,
+                blogPosts: null,
             },
             preserveState: true,
-            onSuccess: (page) => {
-                blogPostsState.value = page.props.blogPosts;
-                blogPostsState.meta = page.props.blogPosts.meta;
+            onSuccess: () => {
+                blogPostsState.data = props.blogPosts.data;
+                blogPostsState.meta = props.blogPosts.meta;
             },
         });
     }

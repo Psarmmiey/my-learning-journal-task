@@ -24,11 +24,10 @@ class BlogPostController extends Controller
 
     public function __construct(private readonly BlogPostServices $blogPostServices) {}
 
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $blogPosts = $this->blogPostServices
-            ->allBlogPosts()
-            ->cursorPaginate(10, ['*'], 'blogPosts');
+            ->allBlogPosts();
 
         $featuredPost = $this->blogPostServices->findFeaturedPost();
 

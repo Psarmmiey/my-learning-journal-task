@@ -137,10 +137,6 @@ const createBlog = () => {
         preserveScroll: true,
         errorBag: 'createPost',
         onSuccess: (page) => {
-            page.props.banner = {
-                style: 'success',
-                message: 'Post created successfully!',
-            };
             closeCreatePostModal();
             postsState.data = page.props.blogPosts.data;
             form.reset('photo', 'title', 'excerpt', 'body', 'is_published');
@@ -149,19 +145,13 @@ const createBlog = () => {
 };
 
 const updateBlog = () => {
-    console.log(updatePostForm);
     if (photoInput.value) {
         updatePostForm.photo = photoInput.value.files[0];
     }
-    console.log(updatePostForm);
     updatePostForm.post(route('blog.update', postToEdit.value.id), {
         preserveScroll: true,
         errorBag: 'updatePost',
         onSuccess: (page) => {
-            page.props.banner = {
-                style: 'success',
-                message: 'Post updated successfully!',
-            };
             closeEditPostModal();
             postsState.data = page.props.blogPosts.data;
             updatePostForm.reset('title', 'excerpt', 'body', 'is_published');
