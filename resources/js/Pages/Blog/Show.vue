@@ -38,7 +38,7 @@ defineProps({
 
         <div class="relative mx-8 flex flex-row justify-center px-4">
             <img
-                :src="post.data.image.original_url"
+                :src="post.data.image?.original_url"
                 alt="Banner"
                 class="h-[488px] w-[979px] max-w-full rounded object-cover sm:w-full md:w-full" />
         </div>

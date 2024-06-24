@@ -6,10 +6,18 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileCannotBeAdded;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
+use Spatie\MediaLibrary\MediaCollections\Exceptions\FileIsTooBig;
 use UnexpectedValueException;
 
 class BlogPostSeeder extends Seeder
 {
+    /**
+     * @throws FileCannotBeAdded
+     * @throws FileDoesNotExist
+     * @throws FileIsTooBig
+     */
     public function run(): void
     {
         $users = User::all();
@@ -29,15 +37,23 @@ class BlogPostSeeder extends Seeder
             $factory = \App\Models\BlogPost::factory();
 
             $posts = $factory
-                ->count(10)
+                ->count(20)
                 ->create([
                     'user_id' => $user->getKey(),
                 ]);
 
             foreach ($posts as $post) {
-                // random hd image from picsum 1920x1080
-                $post->addMediaFromUrl('https://picsum.photos/1920/1080')
-                    ->toMediaCollection('images');
+                // random hd image from picsum at 1920x1080
+                try {
+                    $post->addMediaFromUrl('https://picsum.photos/1920/1080')
+                        ->toMediaCollection('images');
+                } catch (FileCannotBeAdded | FileDoesNotExist | FileIsTooBig $e) {
+                    $post->addMediaFromDisk(
+                        storage_path('app/public/' . $sampleImages[array_rand($sampleImages)])
+                    )->toMediaCollection('images');
+                }
+//                $post->addMediaFromUrl('https://picsum.photos/1920/1080')
+//                    ->toMediaCollection('images');
             }
         }
 
