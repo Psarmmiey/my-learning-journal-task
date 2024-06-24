@@ -117,6 +117,7 @@ class BlogPost extends Model implements HasMedia
     {
         $this->addMediaConversion('preview')
             ->performOnCollections('images')
+            ->nonQueued()
             ->width(300)
             ->height(300);
     }
