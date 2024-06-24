@@ -42,7 +42,7 @@ class BlogPostSeeder extends Seeder
         }
 
         $user = User::first();
-        $firstPost = $user->posts()->last();
+        $firstPost = $user->posts()->latest()->first();
         $firstPost->is_published = true;
         $firstPost->published_at = now();
         $firstPost->is_featured = true;
