@@ -29,7 +29,5 @@ jobs:
         run: |
           forge server:switch wispy-geyser
           forge deploy default
-          FORGE_PHP artisan migrate --force
-          FORGE_PHP artisan queue:restart
         env:
           FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
