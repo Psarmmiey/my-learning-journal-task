@@ -243,7 +243,7 @@ watch(filter, (value) => {
                                         class="mb-4 flex items-center space-x-4">
                                         <div>
                                             <img
-                                                :src="post.image.preview_url"
+                                                :src="post.image?.preview_url"
                                                 alt="Post Image"
                                                 class="h-24 w-32 rounded-lg object-cover" />
                                         </div>
