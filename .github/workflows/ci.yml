@@ -87,7 +87,7 @@ jobs:
                 DB_DATABASE: testdatabase
                 DB_USER: root
                 DB_PASSWORD: secret
-                DB_PORT: ${{ job.services.mysql.ports[3306] }}
+                DB_PORT: 33306
 
             - name: Save PHPUnit cache
               if: always()
