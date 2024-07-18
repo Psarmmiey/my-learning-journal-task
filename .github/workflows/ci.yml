@@ -15,12 +15,7 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
-        env:
-          DB_HOST: mysql
-          DB_DATABASE: test
-          DB_USERNAME: mysql
-          DB_PASSWORD: password
-
+      
         services:
           mysql:
             image: mysql:5.7
