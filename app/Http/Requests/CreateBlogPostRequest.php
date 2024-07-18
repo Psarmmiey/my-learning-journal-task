@@ -18,10 +18,10 @@ class CreateBlogPostRequest extends FormRequest
         return [
             'title' => ['required', 'string', 'max:255'],
             'excerpt' => ['sometimes', 'required_without:body', 'string'],
-            'body' => ['sometimes', 'required_without:photo', 'string'],
+            'body' => ['required_without:photo', 'string'],
             'is_published' => ['required', 'boolean'],
             'is_featured' => ['required', 'boolean'],
-            'photo' => ['sometimes', 'required', 'image'],
+            'photo' => ['required', 'image'],
         ];
     }
 }
