@@ -63,10 +63,10 @@ jobs:
 #            - name: Wait for MySQL to start
 #              run: sleep 20
 
-#            - name: Run Migrations
-#              run: php artisan migrate:fresh --seed -vvv
-#              env:
-#                DB_PORT: ${{ job.services.mysql.ports[3306] }}
+            - name: Run Migrations
+              run: php artisan migrate:fresh --seed -vvv
+              env:
+                DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
             - name: Restore PHPUnit cache
               id: restore-phpunit-cache
