@@ -20,7 +20,7 @@ jobs:
           mysql:
             image: mysql:5.7
             env:
-              MYSQL_USER: user
+              MYSQL_USER: root
               MYSQL_PASSWORD: secret
               MYSQL_ROOT_PASSWORD: password
               MYSQL_DATABASE: testdatabase
