@@ -25,16 +25,21 @@ jobs:
           mysql:
             image: mysql:5.7
             env:
+              MYSQL_USER: user
+              MYSQL_PASSWORD: secret
               MYSQL_ROOT_PASSWORD: password
-              MYSQL_DATABASE: test
+              MYSQL_DATABASE: testdatabase
+              DB_PORT: ${{ job.services.mysql.ports[3306] }}
             ports:
-              - 33306:3306
+              - 3306:3306
             options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         steps:
             - name: Checkout code
               uses: actions/checkout@v4.1.4
-
+            - name: Verify MySQL connection
+              run: |
+                mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uuser -psecret -e "SHOW DATABASES"
             - name: Setup PHP
               uses: shivammathur/setup-php@2.30.4
               with:
@@ -78,6 +83,10 @@ jobs:
             - name: Test with PHPUnit
               run: php artisan test
               env:
+                DB_CONNECTION: mysql
+                DB_DATABASE: testdatabase
+                DB_USER: root
+                DB_PASSWORD: secret
                 DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
             - name: Save PHPUnit cache
