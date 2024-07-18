@@ -15,6 +15,12 @@ on:
 jobs:
     test:
         runs-on: ubuntu-latest
+
+        env:
+          DB_DATABASE: testdatabase
+          DB_USERNAME: user
+          DB_PASSWORD: secret
+          ROOT_PASSWORD: password
       
         services:
           mysql:
@@ -23,7 +29,7 @@ jobs:
               MYSQL_USER: user
               MYSQL_PASSWORD: secret
               MYSQL_ROOT_PASSWORD: password
-              MYSQL_DATABASE: testdatabase
+              MYSQL_DATABASE: ${{ env.DB_DATABASE }}
               DB_PORT: ${{ job.services.mysql.ports[3306] }}
             ports:
               - 33306:3306
