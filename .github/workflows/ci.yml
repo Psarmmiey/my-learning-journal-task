@@ -1,0 +1,88 @@
+name: Backend Tests
+
+on:
+  pull_request:
+    branches:
+      - main
+      - development
+      - CC-308-Running-test-suite-in-CI-CD-Pipeline
+  push:
+    branches:
+      - main
+      - development
+      - CC-308-Running-test-suite-in-CI-CD-Pipeline
+
+jobs:
+    test:
+        runs-on: ubuntu-latest
+        env:
+          DB_HOST: mysql
+          DB_DATABASE: test
+          DB_USERNAME: mysql
+          DB_PASSWORD: password
+
+        services:
+          mysql:
+            image: mysql:5.7
+            env:
+              MYSQL_ROOT_PASSWORD: password
+              MYSQL_DATABASE: test
+            ports:
+              - 33306:3306
+            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4.1.4
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@2.30.4
+              with:
+                php-version: '8.3'
+                extensions: mbstring, intl, pdo, pdo_mysql, xml, zip, bcmath, intl
+                coverage: none
+
+            - name: Install composer dependencies
+              uses: ramsey/composer-install@3.0.0
+
+            - name: Prepare the application
+              run: |
+                php -r "file_exists('.env') || copy('.env.ci', '.env');"
+                php artisan config:clear
+                php artisan key:generate
+#              run: |
+#                php -r "file_exists('.env') || copy('.env.example', '.env');"
+#                php artisan key:generate
+#                php artisan config:clear
+            - name: Verify .env Configuration
+              run: cat .env
+
+#            - name: Wait for MySQL to start
+#              run: sleep 20
+
+            - name: Run Migrations
+              run: php artisan migrate:fresh --seed -vvv
+#              env:
+#                DB_PORT: ${{ job.services.mysql.ports[3306] }}
+
+            - name: Restore PHPUnit cache
+              id: restore-phpunit-cache
+              uses: actions/cache/restore@v4.0.2
+              with:
+                path: ${{ github.workspace }}/.phpunit.result.cache
+                key: ${{ runner.os }}-phpunit-php8.3-${{ hashFiles('**/composer.lock') }}
+                restore-keys: |
+                  ${{ runner.os }}-phpunit-php8.3-
+                  ${{ runner.os }}-phpunit-
+
+            - name: Test with PHPUnit
+              run: php artisan test
+              env:
+                DB_PORT: ${{ job.services.mysql.ports[3306] }}
+
+            - name: Save PHPUnit cache
+              if: always()
+              uses: actions/cache/save@v4.0.2
+              with:
+                path: ${{ github.workspace }}/.phpunit.result.cache
+                key: ${{ steps.restore-phpunit-cache.outputs.cache-primary-key }}
