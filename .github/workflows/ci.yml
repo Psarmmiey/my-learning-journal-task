@@ -18,7 +18,7 @@ jobs:
 
         env:
           DB_DATABASE: testdatabase
-          DB_USERNAME: user
+          DB_USER: user
           DB_PASSWORD: secret
           ROOT_PASSWORD: password
       
@@ -26,13 +26,13 @@ jobs:
           mysql:
             image: mysql:5.7
             env:
-              MYSQL_USER: user
-              MYSQL_PASSWORD: secret
-              MYSQL_ROOT_PASSWORD: password
+              MYSQL_USER: ${{ env.DB_USER }}
+              MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+              MYSQL_ROOT_PASSWORD: ${{ env.ROOT_PASSWORD }}
               MYSQL_DATABASE: ${{ env.DB_DATABASE }}
               DB_PORT: ${{ job.services.mysql.ports[3306] }}
             ports:
-              - 33306:3306
+              - 3306:3306
             options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
 
         steps:
@@ -56,10 +56,7 @@ jobs:
                 php -r "file_exists('.env') || copy('.env.ci', '.env');"
                 php artisan config:clear
                 php artisan key:generate
-#              run: |
-#                php -r "file_exists('.env') || copy('.env.example', '.env');"
-#                php artisan key:generate
-#                php artisan config:clear
+#             
             - name: Verify .env Configuration
               run: cat .env
 
@@ -82,13 +79,15 @@ jobs:
                   ${{ runner.os }}-phpunit-
 
             - name: Test with PHPUnit
-              run: php artisan migrate:fresh --seed -vvv
+              run: |
+                php artisan migrate:fresh --seed -vvv
+                php artisan test
               env:
                 DB_CONNECTION: mysql
-                DB_DATABASE: testdatabase
-                DB_USER: user
-                DB_PASSWORD: secret
-                DB_PORT: 33306
+                DB_DATABASE: ${{ env.DB_DATABASE }}
+                DB_USER: ${{ env.DB_USER }}
+                DB_PASSWORD: ${{ env.DB_PASSWORD }}
+                DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
             - name: Save PHPUnit cache
               if: always()
