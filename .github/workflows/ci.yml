@@ -13,85 +13,90 @@ on:
       - CC-308-Running-test-suite-in-CI-CD-Pipeline
 
 jobs:
-    test:
-        runs-on: ubuntu-latest
-
+  test:
+    runs-on: ubuntu-latest
+    
+    env:
+      DB_DATABASE: testdatabase
+      DB_USER: user
+      DB_PASSWORD: secret
+      ROOT_PASSWORD: password
+    
+    services:
+      mysql:
+        image: mysql:5.7
         env:
-          DB_DATABASE: testdatabase
-          DB_USER: user
-          DB_PASSWORD: secret
-          ROOT_PASSWORD: password
+          MYSQL_USER: ${{ env.DB_USER }}
+          MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
+          MYSQL_ROOT_PASSWORD: ${{ env.ROOT_PASSWORD }}
+          MYSQL_DATABASE: ${{ env.DB_DATABASE }}
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4.1.4
+      - name: Verify MySQL connection
+        run: |
+          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uuser -psecret -e "SHOW DATABASES"
+      - name: Setup PHP
+        uses: shivammathur/setup-php@2.30.4
+        with:
+          php-version: '8.3'
+          extensions: mbstring, intl, pdo, pdo_mysql, xml, zip, bcmath, intl
+          coverage: none
+
+      - name: Install composer dependencies
+        uses: ramsey/composer-install@3.0.0
+
+      - name: Prepare the application
+        run: |
+          php -r "file_exists('.env') || copy('.env.ci', '.env');"
+          php artisan config:clear
+          php artisan key:generate
+
+      - name: Run Migrations
+        run: php artisan migrate:fresh --seed -vvv
+        env:
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4.0.2
+        with:
+          node-version: 20
+          cache: 'npm'
+  
+      - name: Install npm dependencies
+        run: npm ci
       
-        services:
-          mysql:
-            image: mysql:5.7
-            env:
-              MYSQL_USER: ${{ env.DB_USER }}
-              MYSQL_PASSWORD: ${{ env.DB_PASSWORD }}
-              MYSQL_ROOT_PASSWORD: ${{ env.ROOT_PASSWORD }}
-              MYSQL_DATABASE: ${{ env.DB_DATABASE }}
-              DB_PORT: ${{ job.services.mysql.ports[3306] }}
-            ports:
-              - 3306:3306
-            options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+      # Because we use InertiaJs, the frontend manifest should be generated before we run the tests.
+      - name: Build frontend
+        run: npm run build
 
-        steps:
-            - name: Checkout code
-              uses: actions/checkout@v4.1.4
-            - name: Verify MySQL connection
-              run: |
-                mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports['3306'] }} -uuser -psecret -e "SHOW DATABASES"
-            - name: Setup PHP
-              uses: shivammathur/setup-php@2.30.4
-              with:
-                php-version: '8.3'
-                extensions: mbstring, intl, pdo, pdo_mysql, xml, zip, bcmath, intl
-                coverage: none
+      - name: Restore PHPUnit cache
+        id: restore-phpunit-cache
+        uses: actions/cache/restore@v4.0.2
+        with:
+          path: ${{ github.workspace }}/.phpunit.result.cache
+          key: ${{ runner.os }}-phpunit-php8.3-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-phpunit-php8.3-
+            ${{ runner.os }}-phpunit-
 
-            - name: Install composer dependencies
-              uses: ramsey/composer-install@3.0.0
+      - name: Test with PHPUnit
+        run: php artisan test
+        env:
+          #DB_CONNECTION: mysql
+          #DB_DATABASE: ${{ env.DB_DATABASE }}
+          #DB_USER: ${{ env.DB_USER }}
+          #DB_PASSWORD: ${{ env.DB_PASSWORD }}
+          DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
-            - name: Prepare the application
-              run: |
-                php -r "file_exists('.env') || copy('.env.ci', '.env');"
-                php artisan config:clear
-                php artisan key:generate
-#             
-            - name: Verify .env Configuration
-              run: cat .env
-
-#            - name: Wait for MySQL to start
-#              run: sleep 20
-
-            - name: Run Migrations
-              run: php artisan migrate:fresh --seed -vvv
-              env:
-                DB_PORT: ${{ job.services.mysql.ports[3306] }}
-
-            - name: Restore PHPUnit cache
-              id: restore-phpunit-cache
-              uses: actions/cache/restore@v4.0.2
-              with:
-                path: ${{ github.workspace }}/.phpunit.result.cache
-                key: ${{ runner.os }}-phpunit-php8.3-${{ hashFiles('**/composer.lock') }}
-                restore-keys: |
-                  ${{ runner.os }}-phpunit-php8.3-
-                  ${{ runner.os }}-phpunit-
-
-            - name: Test with PHPUnit
-              run: |
-                php artisan migrate:fresh --seed -vvv
-                php artisan test
-              env:
-                DB_CONNECTION: mysql
-                DB_DATABASE: ${{ env.DB_DATABASE }}
-                DB_USER: ${{ env.DB_USER }}
-                DB_PASSWORD: ${{ env.DB_PASSWORD }}
-                DB_PORT: ${{ job.services.mysql.ports[3306] }}
-
-            - name: Save PHPUnit cache
-              if: always()
-              uses: actions/cache/save@v4.0.2
-              with:
-                path: ${{ github.workspace }}/.phpunit.result.cache
-                key: ${{ steps.restore-phpunit-cache.outputs.cache-primary-key }}
+      - name: Save PHPUnit cache
+        if: always()
+        uses: actions/cache/save@v4.0.2
+        with:
+          path: ${{ github.workspace }}/.phpunit.result.cache
+          key: ${{ steps.restore-phpunit-cache.outputs.cache-primary-key }}
