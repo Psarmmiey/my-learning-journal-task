@@ -77,7 +77,7 @@ jobs:
 
       - name: Restore PHPUnit cache
         id: restore-phpunit-cache
-        uses: actions/cache/restore@v4.0.2
+        uses: actions/cache/restore@v4.1.1
         with:
           path: ${{ github.workspace }}/.phpunit.result.cache
           key: ${{ runner.os }}-phpunit-php8.3-${{ hashFiles('**/composer.lock') }}
@@ -96,7 +96,7 @@ jobs:
 
       - name: Save PHPUnit cache
         if: always()
-        uses: actions/cache/save@v4.0.2
+        uses: actions/cache/save@v4.1.1
         with:
           path: ${{ github.workspace }}/.phpunit.result.cache
           key: ${{ steps.restore-phpunit-cache.outputs.cache-primary-key }}
