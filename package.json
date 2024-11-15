@@ -17,7 +17,7 @@
         "autoprefixer": "^10.4.20",
         "axios": "^1.6.4",
         "eslint": "^9.13.0",
-        "eslint-plugin-vue": "^9.27.0",
+        "eslint-plugin-vue": "^9.31.0",
         "globals": "^15.11.0",
         "jsdom": "^24.1.1",
         "laravel-vite-plugin": "^1.0",
