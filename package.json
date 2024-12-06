@@ -30,7 +30,7 @@
     },
     "dependencies": {
         "@vue/test-utils": "^2.4.6",
-        "vitest": "^2.0.5",
+        "vitest": "^2.1.8",
         "vue3-toastify": "^0.2.2"
     }
 }
