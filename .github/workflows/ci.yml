@@ -49,7 +49,7 @@ jobs:
           coverage: none
 
       - name: Install composer dependencies
-        uses: ramsey/composer-install@3.0.0
+        uses: ramsey/composer-install@3.1.1
 
       - name: Prepare the application
         run: |
