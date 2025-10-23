@@ -21,7 +21,9 @@ class TagFactory extends Factory
      */
     public function definition(): array
     {
-        $name = $this->faker->unique()->words(2, true);
+        static $counter = 0;
+        $counter++;
+        $name = 'Tag ' . $counter;
         
         return [
             'name' => $name,
