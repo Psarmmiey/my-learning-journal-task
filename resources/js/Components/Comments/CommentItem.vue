@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { usePage } from '@inertiajs/vue3'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import CommentForm from './CommentForm.vue'
@@ -26,6 +26,7 @@ const showReplyForm = ref(false)
 const editLoading = ref(false)
 const editErrors = ref({})
 const timeLeft = ref(0)
+const timeLeftInterval = ref(null)
 
 const editForm = reactive({
     content: props.comment.content
@@ -123,7 +124,14 @@ const handleReplyAdded = (parentCommentId, newReply) => {
 onMounted(() => {
     calculateTimeLeft()
     // Update time left every minute
-    setInterval(calculateTimeLeft, 60000)
+    timeLeftInterval.value = setInterval(calculateTimeLeft, 60000)
+})
+
+onUnmounted(() => {
+    // Clean up the interval to prevent memory leaks
+    if (timeLeftInterval.value) {
+        clearInterval(timeLeftInterval.value)
+    }
 })
 </script>
 
