@@ -30,6 +30,7 @@
     },
     "dependencies": {
         "@vue/test-utils": "^2.4.6",
+        "date-fns": "^4.1.0",
         "vitest": "^2.0.5",
         "vue3-toastify": "^0.2.2"
     }

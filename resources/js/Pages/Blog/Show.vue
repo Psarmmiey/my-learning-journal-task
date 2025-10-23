@@ -3,6 +3,7 @@ import { Head } from '@inertiajs/vue3';
 import BlogLayout from '@/Layouts/BlogLayout.vue';
 import { formatDate } from '@/helpers/format.js';
 import RecentPosts from '@/Components/BlogPost/RecentPosts.vue';
+import CommentSection from '@/Components/Comments/CommentSection.vue';
 
 defineProps({
     post: {
@@ -53,6 +54,13 @@ defineProps({
                 </section>
             </div>
         </div>
+
+        <!-- Comments Section -->
+        <CommentSection 
+            :blog-post-id="post.data.id" 
+            :comments-count="post.data.comments_count" 
+        />
+        
         <RecentPosts :recent-posts="recentPosts.data" />
     </BlogLayout>
 </template>

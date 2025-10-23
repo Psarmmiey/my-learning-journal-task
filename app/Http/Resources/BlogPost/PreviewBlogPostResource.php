@@ -24,6 +24,7 @@ class PreviewBlogPostResource extends JsonResource
      *     is_published: bool,
      *     author: UserResource,
      *     tags: array,
+     *     comments_count: int,
      *     created_at: string,
      *     updated_at: string,
      * }
@@ -41,6 +42,11 @@ class PreviewBlogPostResource extends JsonResource
             'image' => $this->getFirstMedia('images')?->getFullUrl(),
             'author' => new UserResource($this->author),
             'tags' => $this->tags->pluck('name')->toArray(),
+            'comments_count' => $this->when(
+                $this->relationLoaded('approvedComments'),
+                fn() => $this->approvedComments->count(),
+                0
+            ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

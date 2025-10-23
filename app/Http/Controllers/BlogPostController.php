@@ -72,6 +72,10 @@ class BlogPostController extends Controller
 
     public function show(BlogPost $post): Response
     {
+        // Load relationships efficiently
+        $post->load(['author', 'tags', 'approvedComments.user', 'approvedComments.replies.user'])
+             ->loadCount('approvedComments');
+             
         $recentPosts = $this->blogPostServices
             ->recentBlogPosts(3, $post)->get();
 
