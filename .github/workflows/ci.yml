@@ -63,7 +63,7 @@ jobs:
           DB_PORT: ${{ job.services.mysql.ports[3306] }}
 
       - name: Setup Node
-        uses: actions/setup-node@v4.0.3
+        uses: actions/setup-node@v6.0.0
         with:
           node-version: 20
           cache: 'npm'
