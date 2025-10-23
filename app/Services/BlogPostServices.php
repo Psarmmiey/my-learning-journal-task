@@ -20,6 +20,7 @@ class BlogPostServices
     {
         return BlogPost::orderBy('published_at', 'desc')
             ->with('author')
+            ->withCount('approvedComments')
             ->where('is_published', true)
             ->latest('id')
             ->cursorPaginate(10, ['*'], 'blogPosts');
@@ -43,6 +44,8 @@ class BlogPostServices
     public function myBlogPosts(User $user, $filter = 'all'): array|LengthAwarePaginator|_IH_BlogPost_C|\Illuminate\Pagination\LengthAwarePaginator
     {
         return $user->posts()
+            ->with(['author', 'tags'])
+            ->withCount('approvedComments')
             ->latest('id')
             ->when($filter === 'published', fn ($query) => $query->where('is_published', true))
             ->when($filter === 'draft', fn ($query) => $query->where('is_published', false))
@@ -69,6 +72,7 @@ class BlogPostServices
         })
             ->where('is_published', true)
             ->with(['author', 'tags'])
+            ->withCount('approvedComments')
             ->orderBy('published_at', 'desc')
             ->latest('id')
             ->cursorPaginate(10, ['*'], 'blogPosts');

@@ -27,7 +27,7 @@ class FullBlogPostResource extends JsonResource
      *     author: UserResource,
      *     tags: array,
      *     comments: \Illuminate\Http\Resources\Json\AnonymousResourceCollection,
-     *     comments_count: int,
+     *     comments_count: int|null,
      *     created_at: string,
      *     updated_at: string,
      * }
@@ -48,8 +48,8 @@ class FullBlogPostResource extends JsonResource
             'tags' => $this->tags->pluck('name')->toArray(),
             'comments' => CommentResource::collection($this->whenLoaded('approvedComments')),
             'comments_count' => $this->when(
-                $this->relationLoaded('approvedComments'),
-                fn() => $this->approvedComments->count()
+                isset($this->approved_comments_count),
+                fn() => $this->approved_comments_count
             ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
