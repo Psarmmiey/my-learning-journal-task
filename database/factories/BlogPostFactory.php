@@ -28,4 +28,15 @@ class BlogPostFactory extends Factory
             'user_id' => User::factory(),
         ];
     }
+
+    /**
+     * Indicate that the blog post is published.
+     */
+    public function published(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_published' => true,
+            'published_at' => Carbon::now(),
+        ]);
+    }
 }

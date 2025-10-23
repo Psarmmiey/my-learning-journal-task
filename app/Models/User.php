@@ -79,6 +79,11 @@ class User extends Authenticatable
         return $this->hasMany(BlogPost::class);
     }
 
+    public function comments(): HasMany
+    {
+        return $this->hasMany(\App\Models\Comment::class);
+    }
+
     /**
      * Get the attributes that should be cast.
      *

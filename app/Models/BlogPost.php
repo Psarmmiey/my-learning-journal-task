@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -92,6 +93,30 @@ class BlogPost extends Model implements HasMedia
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(\App\Models\Tag::class, 'blog_post_tag');
+    }
+
+    /**
+     * @return HasMany<\App\Models\Comment>
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(\App\Models\Comment::class);
+    }
+
+    /**
+     * @return HasMany<\App\Models\Comment>
+     */
+    public function approvedComments(): HasMany
+    {
+        return $this->hasMany(\App\Models\Comment::class)->approved();
+    }
+
+    /**
+     * Scope to get only published blog posts
+     */
+    public function scopePublished($query)
+    {
+        return $query->where('is_published', true)->whereNotNull('published_at');
     }
 
     /**

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Resources\BlogPost;
 
+use App\Http\Resources\Comment\CommentResource;
 use App\Http\Resources\UserResource;
 use App\Models\BlogPost;
 use App\Models\Media;
@@ -25,6 +26,8 @@ class FullBlogPostResource extends JsonResource
      *     is_published: bool,
      *     author: UserResource,
      *     tags: array,
+     *     comments: \Illuminate\Http\Resources\Json\AnonymousResourceCollection,
+     *     comments_count: int,
      *     created_at: string,
      *     updated_at: string,
      * }
@@ -43,6 +46,11 @@ class FullBlogPostResource extends JsonResource
             'is_featured' => $this->is_featured,
             'author' => new UserResource($this->author),
             'tags' => $this->tags->pluck('name')->toArray(),
+            'comments' => CommentResource::collection($this->whenLoaded('approvedComments')),
+            'comments_count' => $this->when(
+                $this->relationLoaded('approvedComments'),
+                fn() => $this->approvedComments->count()
+            ),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
