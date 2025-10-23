@@ -56,7 +56,10 @@ defineProps({
         </div>
 
         <!-- Comments Section -->
-        <CommentSection :blog-post-id="post.data.id" />
+        <CommentSection 
+            :blog-post-id="post.data.id" 
+            :comments-count="post.data.comments_count" 
+        />
         
         <RecentPosts :recent-posts="recentPosts.data" />
     </BlogLayout>

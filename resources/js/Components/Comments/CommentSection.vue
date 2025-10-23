@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { Link } from '@inertiajs/vue3'
 import CommentForm from './CommentForm.vue'
 import CommentItem from './CommentItem.vue'
@@ -9,6 +9,10 @@ const props = defineProps({
     blogPostId: {
         type: String,
         required: true,
+    },
+    commentsCount: {
+        type: Number,
+        default: 0,
     }
 })
 
@@ -16,6 +20,7 @@ const props = defineProps({
 const comments = ref([])
 const loading = ref(false)
 const error = ref(null)
+const currentCommentsCount = ref(props.commentsCount)
 
 // Computed properties
 const topLevelComments = computed(() => {
@@ -40,6 +45,7 @@ const fetchComments = async () => {
 
 const handleCommentAdded = (newComment) => {
     comments.value.unshift(newComment)
+    currentCommentsCount.value++
 }
 
 const handleCommentUpdated = (updatedComment) => {
@@ -51,6 +57,7 @@ const handleCommentUpdated = (updatedComment) => {
 
 const handleCommentDeleted = (deletedCommentId) => {
     comments.value = comments.value.filter(c => c.id !== deletedCommentId)
+    currentCommentsCount.value--
 }
 
 const handleReplyAdded = (parentCommentId, newReply) => {
@@ -60,8 +67,14 @@ const handleReplyAdded = (parentCommentId, newReply) => {
             parentComment.replies = []
         }
         parentComment.replies.push(newReply)
+        currentCommentsCount.value++
     }
 }
+
+// Watch for prop changes
+watch(() => props.commentsCount, (newCount) => {
+    currentCommentsCount.value = newCount
+})
 
 // Lifecycle
 onMounted(() => {
@@ -75,7 +88,7 @@ onMounted(() => {
             <!-- Comments Header -->
             <div class="flex items-center justify-between mb-6">
                 <h3 class="text-2xl font-bold text-gray-900 dark:text-white">
-                    Comments ({{ comments.length }})
+                    Comments ({{ currentCommentsCount }})
                 </h3>
             </div>
 
