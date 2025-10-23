@@ -85,25 +85,25 @@ class CommentController extends Controller
     /**
      * Reply to a comment.
      */
-    public function reply(CreateCommentRequest $request, string $commentId)
+    public function reply(CreateCommentRequest $request, Comment $comment)
     {
-        // Fetch the parent comment with its blog post
-        $parentComment = Comment::with('blogPost')->findOrFail($commentId);
+        // Load the blog post relationship
+        $comment->load('blogPost');
         
         // Authorization check
-        Gate::authorize('create', [Comment::class, $parentComment->blogPost]);
+        Gate::authorize('create', [Comment::class, $comment->blogPost]);
         
-        $comment = Comment::create([
+        $reply = Comment::create([
             'content' => $request->validated()['content'],
-            'blog_post_id' => $parentComment->blog_post_id,
+            'blog_post_id' => $comment->blog_post_id,
             'user_id' => $request->user()->id,
-            'parent_id' => $parentComment->id,
+            'parent_id' => $comment->id,
             'is_approved' => true, // Auto-approve replies for now
         ]);
 
-        $comment->load(['user', 'parent.user']);
+        $reply->load(['user', 'parent.user']);
 
-        return (new CommentResource($comment))
+        return (new CommentResource($reply))
             ->response()
             ->setStatusCode(201);
     }
