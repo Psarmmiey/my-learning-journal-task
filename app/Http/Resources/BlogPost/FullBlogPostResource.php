@@ -24,6 +24,7 @@ class FullBlogPostResource extends JsonResource
      *     published_at: string,
      *     is_published: bool,
      *     author: UserResource,
+     *     tags: array,
      *     created_at: string,
      *     updated_at: string,
      * }
@@ -41,6 +42,7 @@ class FullBlogPostResource extends JsonResource
             'is_published' => $this->is_published,
             'is_featured' => $this->is_featured,
             'author' => new UserResource($this->author),
+            'tags' => $this->tags->pluck('name')->toArray(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

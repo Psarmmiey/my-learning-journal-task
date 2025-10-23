@@ -22,6 +22,8 @@ class CreateBlogPostRequest extends FormRequest
             'is_published' => ['required', 'boolean'],
             'is_featured' => ['required', 'boolean'],
             'photo' => ['required', 'image'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 }

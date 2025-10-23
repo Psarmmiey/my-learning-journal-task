@@ -52,6 +52,10 @@ class BlogPostSeeder extends Seeder
                         storage_path('app/public/'.$sampleImages[array_rand($sampleImages)])
                     )->toMediaCollection('images');
                 }
+                
+                // Attach random tags to posts
+                $tags = \App\Models\Tag::inRandomOrder()->take(rand(1, 4))->pluck('id');
+                $post->tags()->attach($tags);
             }
         }
 

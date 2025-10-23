@@ -23,6 +23,7 @@ class PreviewBlogPostResource extends JsonResource
      *     published_at: string,
      *     is_published: bool,
      *     author: UserResource,
+     *     tags: array,
      *     created_at: string,
      *     updated_at: string,
      * }
@@ -39,6 +40,7 @@ class PreviewBlogPostResource extends JsonResource
             'is_published' => $this->is_published,
             'image' => $this->getFirstMedia('images')?->getFullUrl(),
             'author' => new UserResource($this->author),
+            'tags' => $this->tags->pluck('name')->toArray(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
