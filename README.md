@@ -14,7 +14,7 @@ The project can be run locally using Laravel's built-in development server or us
 
 ### Local Installation
 Requirements:
-- PHP 7.4 or higher
+- PHP 8.2 or higher
 - Composer
 - MySQL/PgSQL
 - Node.js

@@ -141,7 +141,7 @@ This project follows Laravel conventions with some modern additions:
 
 ### Key Technologies
 
-- **Backend:** Laravel 11, PHP 8.3
+- **Backend:** Laravel 11, PHP 8.2+
 - **Frontend:** Vue.js 3, Inertia.js, Tailwind CSS
 - **Database:** Uses ULIDs as primary keys
 - **Testing:** Pest framework
@@ -299,7 +299,7 @@ Brief description of changes
 
 ### PHP Standards
 
-- **PHP Version:** 8.3+
+- **PHP Version:** 8.2+ (as required in composer.json)
 - **Style:** Laravel conventions + strict types
 - **Formatting:** Use Laravel Pint
 - **Type Declarations:** Always use `declare(strict_types=1);`
