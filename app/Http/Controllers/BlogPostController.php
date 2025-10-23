@@ -138,7 +138,7 @@ class BlogPostController extends Controller
             
             $slug = \Illuminate\Support\Str::slug($tagName);
             $tag = \App\Models\Tag::firstOrCreate(
-                ['slug' => $slug],
+                ['name' => $tagName],
                 ['name' => $tagName, 'slug' => $slug]
             );
             

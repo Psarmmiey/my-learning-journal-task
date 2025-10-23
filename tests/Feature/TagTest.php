@@ -14,7 +14,7 @@ beforeEach(function () {
 test('can create a blog post with tags', function () {
     $tagData = ['Laravel', 'PHP', 'Tutorial'];
     
-    $response = $this->post(route('blog-post.store'), [
+    $response = $this->post('/blog', [
         'title' => 'Test Post',
         'body' => 'Test content',
         'is_published' => true,
@@ -39,13 +39,17 @@ test('can update blog post tags', function () {
         $post->tags()->attach($tag->id);
     }
     
-    $response = $this->patch(route('blog-post.update', $post), [
+    $response = $this->post('/blog/' . $post->id, [
         'title' => 'Updated Post',
+        'excerpt' => 'Updated excerpt',
         'tags' => $newTags,
     ]);
     
+    $response->assertOk();
+    $response->assertSessionHasNoErrors();
+    
     $post->refresh();
-    expect($post->tags->pluck('name')->toArray())->toBe($newTags);
+    expect($post->tags->pluck('name')->sort()->values()->toArray())->toBe(collect($newTags)->sort()->values()->toArray());
 });
 
 test('tags are created automatically if they dont exist', function () {
@@ -53,7 +57,7 @@ test('tags are created automatically if they dont exist', function () {
     
     expect(Tag::whereIn('name', $nonExistentTags)->count())->toBe(0);
     
-    $this->post(route('blog-post.store'), [
+    $this->post('/blog', [
         'title' => 'Test Post',
         'body' => 'Test content',
         'is_published' => true,
@@ -69,7 +73,7 @@ test('tag slugs are generated correctly', function () {
     $tagName = 'Complex Tag Name With Spaces';
     $expectedSlug = 'complex-tag-name-with-spaces';
     
-    $this->post(route('blog-post.store'), [
+    $this->post('/blog', [
         'title' => 'Test Post',
         'body' => 'Test content',
         'is_published' => true,
