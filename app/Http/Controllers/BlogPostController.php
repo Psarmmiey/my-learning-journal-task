@@ -54,10 +54,20 @@ class BlogPostController extends Controller
     {
         $user = auth()->user();
         $this->authorize('create', BlogPost::class);
-        $post = $user->posts()->create($request->validated());
+        
+        $validated = $request->validated();
+        $tags = $validated['tags'] ?? [];
+        unset($validated['tags']);
+        
+        $post = $user->posts()->create($validated);
 
         $image = $request->file('photo');
         $post->addImage($image);
+        
+        // Handle tags
+        if (!empty($tags)) {
+            $this->syncTags($post, $tags);
+        }
     }
 
     public function show(BlogPost $post): Response
@@ -89,11 +99,21 @@ class BlogPostController extends Controller
     {
         Gate::authorize('update', $post);
 
-        $post->update($request->validated());
+        $validated = $request->validated();
+        $tags = $validated['tags'] ?? null;
+        unset($validated['tags']);
+
+        $post->update($validated);
+        
         if ($request->hasFile('photo')) {
             $image = $request->file('photo');
             $post->clearMediaCollection('images');
             $post->addImage($image);
+        }
+        
+        // Handle tags if provided
+        if ($tags !== null) {
+            $this->syncTags($post, $tags);
         }
     }
 
@@ -101,5 +121,30 @@ class BlogPostController extends Controller
     {
         Gate::authorize('delete', $post);
         $post->delete();
+    }
+
+    /**
+     * Sync tags with the blog post
+     */
+    private function syncTags(BlogPost $post, array $tagNames): void
+    {
+        $tagIds = [];
+        
+        foreach ($tagNames as $tagName) {
+            $tagName = trim($tagName);
+            if (empty($tagName)) {
+                continue;
+            }
+            
+            $slug = \Illuminate\Support\Str::slug($tagName);
+            $tag = \App\Models\Tag::firstOrCreate(
+                ['slug' => $slug],
+                ['name' => $tagName, 'slug' => $slug]
+            );
+            
+            $tagIds[] = $tag->id;
+        }
+        
+        $post->tags()->sync($tagIds);
     }
 }

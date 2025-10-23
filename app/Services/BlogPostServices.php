@@ -58,4 +58,33 @@ class BlogPostServices
             ->where('is_published', true)
             ->first();
     }
+
+    /**
+     * Fetch blog posts filtered by tag
+     */
+    public function blogPostsByTag(string $tagSlug): CursorPaginator
+    {
+        return BlogPost::whereHas('tags', function ($query) use ($tagSlug) {
+            $query->where('slug', $tagSlug);
+        })
+            ->where('is_published', true)
+            ->with(['author', 'tags'])
+            ->orderBy('published_at', 'desc')
+            ->latest('id')
+            ->cursorPaginate(10, ['*'], 'blogPosts');
+    }
+
+    /**
+     * Get popular tags with post count
+     */
+    public function getPopularTags(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    {
+        return \App\Models\Tag::withCount(['posts' => function ($query) {
+            $query->where('is_published', true);
+        }])
+            ->having('posts_count', '>', 0)
+            ->orderBy('posts_count', 'desc')
+            ->limit($limit)
+            ->get();
+    }
 }

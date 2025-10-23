@@ -22,6 +22,8 @@ class UpdateBlogPostRequest extends FormRequest
             'is_published' => ['sometimes', 'boolean'],
             'is_featured' => ['sometimes', 'boolean'],
             'photo' => ['sometimes',  'required_without:body', 'image:max:2048', 'nullable'],
+            'tags' => ['sometimes', 'array'],
+            'tags.*' => ['string', 'max:50'],
         ];
     }
 }
