@@ -157,14 +157,14 @@ Why I choose ULID as the primary key for my database tables:
 For the sake of simplicity, I have disabled email verification in the application. However, enabling email verification is a common practice in web applications to ensure that users provide a valid email address and to prevent spam or abuse. When email verification is enabled, users are required to verify their email address by clicking on a link sent to their email before they can access certain features of the application.
 
 ## Features to Add
-- Role-based Access Control: Implement role-based access control to restrict certain actions based on user roles. For example, only administrators should be able to delete journal entries or manage user accounts.
-- Search Functionality: Add a search feature to allow users to search for journal entries by title, body, or tags. This can help users quickly find entries based on specific keywords or topics.
-- Tagging System: Implement a tagging system to allow users to categorize journal entries with tags. This can help users organize their entries and find related content more easily.
-- Markdown Support: Add support for Markdown formatting in journal entries to allow users to format text, add links, and embed images. Markdown is a popular lightweight markup language that is easy to read and write.
-- Commenting System: Implement a commenting system to allow users to leave comments on journal entries. This can facilitate discussions, feedback, and engagement among users.
-- Notifications: Add a notification system to alert users about new comments, likes, or mentions in their journal entries. Notifications can help users stay informed and engaged with the application.
-- Export/Import Functionality: Implement export and import functionality to allow users to export their journal entries to a file or import entries from an external source. This can help users back up their data or migrate to other platforms.
-- Dark Mode: Add a dark mode theme option to provide users with a choice of light or dark color schemes. Dark mode can reduce eye strain and improve readability in low-light environments.
+- [ ] Role-based Access Control: Implement role-based access control to restrict certain actions based on user roles. For example, only administrators should be able to delete journal entries or manage user accounts.
+- [ ] Search Functionality: Add a search feature to allow users to search for journal entries by title, body, or tags. This can help users quickly find entries based on specific keywords or topics.
+- [x] Tagging System: Implement a tagging system to allow users to categorize journal entries with tags. This can help users organize their entries and find related content more easily.
+- [ ] Markdown Support: Add support for Markdown formatting in journal entries to allow users to format text, add links, and embed images. Markdown is a popular lightweight markup language that is easy to read and write.
+- [ ] Commenting System: Implement a commenting system to allow users to leave comments on journal entries. This can facilitate discussions, feedback, and engagement among users.
+- [ ] Notifications: Add a notification system to alert users about new comments, likes, or mentions in their journal entries. Notifications can help users stay informed and engaged with the application.
+- [ ] Export/Import Functionality: Implement export and import functionality to allow users to export their journal entries to a file or import entries from an external source. This can help users back up their data or migrate to other platforms.
+- [ ] Dark Mode: Add a dark mode theme option to provide users with a choice of light or dark color schemes. Dark mode can reduce eye strain and improve readability in low-light environments.
 
 
 ## Conclusion
