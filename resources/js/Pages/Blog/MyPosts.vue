@@ -63,6 +63,7 @@ const postToEdit = ref(null);
 const isEditModalOpen = ref(false);
 const imagePreview = ref('');
 const filter = ref('all');
+const tagInput = ref('');
 const { route } = useRoute();
 
 const postsState = reactive({
@@ -78,6 +79,7 @@ const form = useForm({
     is_published: false,
     is_featured: false,
     photo: null,
+    tags: [],
 });
 
 const updatePostForm = useForm({
@@ -87,6 +89,7 @@ const updatePostForm = useForm({
     is_published: false,
     is_featured: false,
     photo: null,
+    tags: [],
 });
 
 const statusClass = (status) => ({
@@ -117,18 +120,21 @@ const openEditPostModal = (post) => {
     updatePostForm.body = post.body;
     updatePostForm.is_published = post.is_published;
     updatePostForm.photo = post.image?.uuid;
+    updatePostForm.tags = post.tags || [];
     imagePreview.value = post.image.preview_url;
 };
 
 const closeCreatePostModal = () => {
     openCreatePost.value = false;
-    form.reset('photo', 'title', 'excerpt', 'body', 'is_published');
+    form.reset('photo', 'title', 'excerpt', 'body', 'is_published', 'tags');
+    tagInput.value = '';
 };
 
 const closeEditPostModal = () => {
     isEditModalOpen.value = false;
     postToEdit.value = null;
-    updatePostForm.reset('title', 'excerpt', 'body', 'is_published');
+    updatePostForm.reset('title', 'excerpt', 'body', 'is_published', 'tags');
+    tagInput.value = '';
 };
 
 const createBlog = () => {
@@ -139,7 +145,7 @@ const createBlog = () => {
         onSuccess: (page) => {
             closeCreatePostModal();
             postsState.data = page.props.blogPosts.data;
-            form.reset('photo', 'title', 'excerpt', 'body', 'is_published');
+            form.reset('photo', 'title', 'excerpt', 'body', 'is_published', 'tags');
         },
     });
 };
@@ -154,7 +160,7 @@ const updateBlog = () => {
         onSuccess: (page) => {
             closeEditPostModal();
             postsState.data = page.props.blogPosts.data;
-            updatePostForm.reset('title', 'excerpt', 'body', 'is_published');
+            updatePostForm.reset('title', 'excerpt', 'body', 'is_published', 'tags');
         },
     });
 };
@@ -188,6 +194,27 @@ const deletePost = (postId) => {
                 postsState.data = page.props.blogPosts.data;
             },
         });
+    }
+};
+
+const addTag = (formType = 'create') => {
+    const currentForm = formType === 'create' ? form : updatePostForm;
+    const trimmedTag = tagInput.value.trim();
+    if (trimmedTag && !currentForm.tags.includes(trimmedTag)) {
+        currentForm.tags.push(trimmedTag);
+        tagInput.value = '';
+    }
+};
+
+const removeTag = (index, formType = 'create') => {
+    const currentForm = formType === 'create' ? form : updatePostForm;
+    currentForm.tags.splice(index, 1);
+};
+
+const handleTagKeydown = (event, formType = 'create') => {
+    if (event.key === 'Enter') {
+        event.preventDefault();
+        addTag(formType);
     }
 };
 
@@ -275,6 +302,14 @@ watch(filter, (value) => {
                                                         )
                                                     }}</span
                                                 >
+                                            </div>
+                                            <div v-if="post.tags && post.tags.length > 0" class="mt-2 flex flex-wrap gap-1">
+                                                <span
+                                                    v-for="(tag, index) in post.tags"
+                                                    :key="index"
+                                                    class="inline-block rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-700">
+                                                    {{ tag }}
+                                                </span>
                                             </div>
                                         </div>
                                     </div>
@@ -423,6 +458,41 @@ watch(filter, (value) => {
                 </div>
 
                 <div class="mt-4">
+                    <InputLabel for="tags" value="Tags" />
+                    <div class="mt-1 block w-3/4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <TextInput
+                                id="tags"
+                                v-model="tagInput"
+                                class="flex-1"
+                                placeholder="Add a tag and press Enter"
+                                type="text"
+                                @keydown="handleTagKeydown($event, 'create')" />
+                            <SecondaryButton
+                                type="button"
+                                @click="addTag('create')">
+                                Add
+                            </SecondaryButton>
+                        </div>
+                        <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2">
+                            <span
+                                v-for="(tag, index) in form.tags"
+                                :key="index"
+                                class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
+                                {{ tag }}
+                                <button
+                                    type="button"
+                                    class="ml-1 text-blue-600 hover:text-blue-800"
+                                    @click="removeTag(index, 'create')">
+                                    &times;
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <InputError :message="form.errors.tags" class="mt-2" />
+                </div>
+
+                <div class="mt-4">
                     <InputLabel for="status" value="Status" />
                     <select
                         id="status"
@@ -556,6 +626,41 @@ watch(filter, (value) => {
                     <InputError
                         :message="updatePostForm.errors.body"
                         class="mt-2" />
+                </div>
+
+                <div class="mt-4">
+                    <InputLabel for="edit-tags" value="Tags" />
+                    <div class="mt-1 block w-3/4">
+                        <div class="flex items-center gap-2 mb-2">
+                            <TextInput
+                                id="edit-tags"
+                                v-model="tagInput"
+                                class="flex-1"
+                                placeholder="Add a tag and press Enter"
+                                type="text"
+                                @keydown="handleTagKeydown($event, 'edit')" />
+                            <SecondaryButton
+                                type="button"
+                                @click="addTag('edit')">
+                                Add
+                            </SecondaryButton>
+                        </div>
+                        <div v-if="updatePostForm.tags.length > 0" class="flex flex-wrap gap-2">
+                            <span
+                                v-for="(tag, index) in updatePostForm.tags"
+                                :key="index"
+                                class="inline-flex items-center rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
+                                {{ tag }}
+                                <button
+                                    type="button"
+                                    class="ml-1 text-blue-600 hover:text-blue-800"
+                                    @click="removeTag(index, 'edit')">
+                                    &times;
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                    <InputError :message="updatePostForm.errors.tags" class="mt-2" />
                 </div>
 
                 <div class="mt-4">

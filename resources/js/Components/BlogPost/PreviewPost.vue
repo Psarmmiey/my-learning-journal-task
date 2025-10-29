@@ -26,6 +26,14 @@ defineProps({
                 </p>
                 <h3 class="my-2 text-xl font-bold">{{ post.title }}</h3>
                 <p class="text-sm text-gray-700">{{ post.excerpt }}</p>
+                <div v-if="post.tags && post.tags.length > 0" class="mt-2 flex flex-wrap gap-1">
+                    <span
+                        v-for="(tag, index) in post.tags"
+                        :key="index"
+                        class="inline-block rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-700">
+                        {{ tag }}
+                    </span>
+                </div>
             </div>
         </div>
     </Link>

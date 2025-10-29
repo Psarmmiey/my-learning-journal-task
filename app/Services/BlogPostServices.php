@@ -19,7 +19,7 @@ class BlogPostServices
     public function allBlogPosts(): CursorPaginator
     {
         return BlogPost::orderBy('published_at', 'desc')
-            ->with('author')
+            ->with(['author', 'tags'])
             ->withCount('approvedComments')
             ->where('is_published', true)
             ->latest('id')
@@ -32,7 +32,7 @@ class BlogPostServices
     public function recentBlogPosts(int $count = 3, ?BlogPost $currentPost = null): Builder
     {
         return BlogPost::orderBy('published_at', 'desc')
-            ->with('author')
+            ->with(['author', 'tags'])
             ->where('is_published', true)
             ->when($currentPost, fn ($query) => $query->where('id', '!=', $currentPost->id))
             ->limit($count);

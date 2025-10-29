@@ -33,6 +33,14 @@ defineProps({
                     <p class="text-lg lg:break-words">
                         {{ post.data.excerpt }}
                     </p>
+                    <div v-if="post.data.tags && post.data.tags.length > 0" class="mt-4 flex flex-wrap gap-2">
+                        <span
+                            v-for="(tag, index) in post.data.tags"
+                            :key="index"
+                            class="inline-block rounded-full bg-blue-100 px-3 py-1 text-sm text-blue-800">
+                            {{ tag }}
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
