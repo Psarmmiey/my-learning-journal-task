@@ -3,25 +3,29 @@
 ## Overview
 
 This migration will replace our custom comment system with Spatie's Laravel Comments package, which provides:
-- Better maintainability and community support
-- Built-in features like threaded comments, reactions, and moderation
-- Consistent API design following Laravel conventions
-- Comprehensive testing and documentation
+
+-   Better maintainability and community support
+-   Built-in features like threaded comments, reactions, and moderation
+-   Consistent API design following Laravel conventions
+-   Comprehensive testing and documentation
 
 ## Phase 1: Installation (Manual Steps Required)
 
 ### 1. Install Package
+
 ```bash
 composer require spatie/laravel-comments
 ```
 
 ### 2. Publish and Run Migrations
+
 ```bash
 php artisan vendor:publish --tag="comments-migrations"
 php artisan migrate
 ```
 
 ### 3. Optional: Publish Config
+
 ```bash
 php artisan vendor:publish --tag="comments-config"
 ```
@@ -29,6 +33,7 @@ php artisan vendor:publish --tag="comments-config"
 ## Phase 2: Model Updates
 
 ### Update BlogPost Model
+
 Add the Spatie comments functionality to your BlogPost model:
 
 ```php
@@ -42,12 +47,13 @@ use Spatie\Comments\Models\Concerns\Interfaces\CanComment;
 class BlogPost extends Model implements CanComment
 {
     use HasComments;
-    
+
     // ... existing code
 }
 ```
 
-### Update User Model  
+### Update User Model
+
 ```php
 <?php
 
@@ -59,7 +65,7 @@ use Spatie\Comments\Models\Concerns\Interfaces\CanComment;
 class User extends Authenticatable implements CanComment
 {
     use InteractsWithComments;
-    
+
     // ... existing code
 }
 ```
@@ -67,6 +73,7 @@ class User extends Authenticatable implements CanComment
 ## Phase 3: Data Migration
 
 ### Custom Migration to Preserve Existing Data
+
 Create a migration to transfer data from our custom comments table to Spatie's structure:
 
 ```php
@@ -88,19 +95,19 @@ return new class extends Migration
                 $spatieComment = SpatieComment::create([
                     'commentable_type' => 'App\Models\BlogPost',
                     'commentable_id' => $comment->blog_post_id,
-                    'commenter_type' => 'App\Models\User', 
+                    'commenter_type' => 'App\Models\User',
                     'commenter_id' => $comment->user_id,
                     'comment' => $comment->content,
                     'approved_at' => $comment->is_approved ? $comment->created_at : null,
                     'created_at' => $comment->created_at,
                     'updated_at' => $comment->updated_at,
                 ]);
-                
+
                 // Store mapping for replies
                 $this->commentMapping[$comment->id] = $spatieComment->id;
             }
         });
-        
+
         // Then migrate replies
         CustomComment::whereNotNull('parent_id')->chunk(100, function ($comments) {
             foreach ($comments as $comment) {
@@ -127,6 +134,7 @@ return new class extends Migration
 ## Phase 4: Controller Updates
 
 ### Replace CommentController with Spatie's API
+
 Spatie provides built-in controllers, but you can customize them:
 
 ```php
@@ -139,7 +147,7 @@ use Spatie\Comments\Http\Controllers\CommentController as SpatieCommentControlle
 class CommentController extends SpatieCommentController
 {
     // Override methods as needed for custom business logic
-    
+
     public function store(Request $request)
     {
         // Add custom validation or authorization
@@ -153,12 +161,14 @@ class CommentController extends SpatieCommentController
 ### Update Vue Components to use Spatie's API
 
 The Spatie package provides these endpoints:
-- `POST /comments` - Create comment
-- `PATCH /comments/{comment}` - Update comment  
-- `DELETE /comments/{comment}` - Delete comment
-- `GET /comments` - List comments
+
+-   `POST /comments` - Create comment
+-   `PATCH /comments/{comment}` - Update comment
+-   `DELETE /comments/{comment}` - Delete comment
+-   `GET /comments` - List comments
 
 ### Updated CommentSection.vue
+
 ```vue
 <script setup>
 // Update API calls to use Spatie's endpoints
@@ -166,26 +176,27 @@ const fetchComments = async () => {
     const response = await axios.get('/comments', {
         params: {
             commentable_type: 'App\\Models\\BlogPost',
-            commentable_id: props.blogPostId
-        }
-    })
-    comments.value = response.data.data
-}
+            commentable_id: props.blogPostId,
+        },
+    });
+    comments.value = response.data.data;
+};
 
 const createComment = async (content) => {
     const response = await axios.post('/comments', {
         commentable_type: 'App\\Models\\BlogPost',
         commentable_id: props.blogPostId,
-        comment: content
-    })
-    return response.data
-}
+        comment: content,
+    });
+    return response.data;
+};
 </script>
 ```
 
 ## Phase 6: Route Updates
 
 ### Update routes/blog.php
+
 ```php
 <?php
 
@@ -201,6 +212,7 @@ Route::get('/comments', [CommentController::class, 'index'])->name('comments.ind
 ## Phase 7: Policy Updates
 
 ### Update CommentPolicy for Spatie's Comment Model
+
 ```php
 <?php
 
@@ -213,10 +225,10 @@ class CommentPolicy
 {
     public function update(User $user, Comment $comment): bool
     {
-        return $user->id === $comment->commenter_id 
+        return $user->id === $comment->commenter_id
             && $comment->created_at->diffInMinutes(now()) <= 15;
     }
-    
+
     public function delete(User $user, Comment $comment): bool
     {
         return $user->id === $comment->commenter_id;
@@ -227,6 +239,7 @@ class CommentPolicy
 ## Phase 8: Test Updates
 
 ### Update Tests for Spatie's Models
+
 ```php
 <?php
 
@@ -235,13 +248,13 @@ use Spatie\Comments\Models\Comment;
 test('users can create comments', function () {
     $user = User::factory()->create();
     $post = BlogPost::factory()->create();
-    
+
     $response = $this->actingAs($user)->post('/comments', [
         'commentable_type' => 'App\\Models\\BlogPost',
         'commentable_id' => $post->id,
         'comment' => 'Test comment'
     ]);
-    
+
     $response->assertCreated();
     expect(Comment::count())->toBe(1);
 });
@@ -250,6 +263,7 @@ test('users can create comments', function () {
 ## Phase 9: Cleanup
 
 ### Remove Custom Implementation
+
 1. Delete custom Comment model: `app/Models/Comment.php`
 2. Delete custom CommentController: `app/Http/Controllers/CommentController.php`
 3. Delete custom migrations: `database/migrations/*_create_comments_table.php`

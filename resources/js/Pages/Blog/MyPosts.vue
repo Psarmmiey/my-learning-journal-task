@@ -145,7 +145,14 @@ const createBlog = () => {
         onSuccess: (page) => {
             closeCreatePostModal();
             postsState.data = page.props.blogPosts.data;
-            form.reset('photo', 'title', 'excerpt', 'body', 'is_published', 'tags');
+            form.reset(
+                'photo',
+                'title',
+                'excerpt',
+                'body',
+                'is_published',
+                'tags',
+            );
         },
     });
 };
@@ -160,7 +167,13 @@ const updateBlog = () => {
         onSuccess: (page) => {
             closeEditPostModal();
             postsState.data = page.props.blogPosts.data;
-            updatePostForm.reset('title', 'excerpt', 'body', 'is_published', 'tags');
+            updatePostForm.reset(
+                'title',
+                'excerpt',
+                'body',
+                'is_published',
+                'tags',
+            );
         },
     });
 };
@@ -251,7 +264,9 @@ watch(filter, (value) => {
                         >New Post
                     </PrimaryButton>
                 </div>
-                <div v-if="postsState.data.length === 0" class="text-center py-4">
+                <div
+                    v-if="postsState.data.length === 0"
+                    class="py-4 text-center">
                     <p>You have not created any posts yet.</p>
                 </div>
                 <ul>
@@ -303,9 +318,16 @@ watch(filter, (value) => {
                                                     }}</span
                                                 >
                                             </div>
-                                            <div v-if="post.tags && post.tags.length > 0" class="mt-2 flex flex-wrap gap-1">
+                                            <div
+                                                v-if="
+                                                    post.tags &&
+                                                    post.tags.length > 0
+                                                "
+                                                class="mt-2 flex flex-wrap gap-1">
                                                 <span
-                                                    v-for="(tag, index) in post.tags"
+                                                    v-for="(
+                                                        tag, index
+                                                    ) in post.tags"
                                                     :key="index"
                                                     class="inline-block rounded-full bg-gray-200 px-2 py-1 text-xs text-gray-700">
                                                     {{ tag }}
@@ -460,7 +482,7 @@ watch(filter, (value) => {
                 <div class="mt-4">
                     <InputLabel for="tags" value="Tags" />
                     <div class="mt-1 block w-3/4">
-                        <div class="flex items-center gap-2 mb-2">
+                        <div class="mb-2 flex items-center gap-2">
                             <TextInput
                                 id="tags"
                                 v-model="tagInput"
@@ -474,7 +496,9 @@ watch(filter, (value) => {
                                 Add
                             </SecondaryButton>
                         </div>
-                        <div v-if="form.tags.length > 0" class="flex flex-wrap gap-2">
+                        <div
+                            v-if="form.tags.length > 0"
+                            class="flex flex-wrap gap-2">
                             <span
                                 v-for="(tag, index) in form.tags"
                                 :key="index"
@@ -631,7 +655,7 @@ watch(filter, (value) => {
                 <div class="mt-4">
                     <InputLabel for="edit-tags" value="Tags" />
                     <div class="mt-1 block w-3/4">
-                        <div class="flex items-center gap-2 mb-2">
+                        <div class="mb-2 flex items-center gap-2">
                             <TextInput
                                 id="edit-tags"
                                 v-model="tagInput"
@@ -645,7 +669,9 @@ watch(filter, (value) => {
                                 Add
                             </SecondaryButton>
                         </div>
-                        <div v-if="updatePostForm.tags.length > 0" class="flex flex-wrap gap-2">
+                        <div
+                            v-if="updatePostForm.tags.length > 0"
+                            class="flex flex-wrap gap-2">
                             <span
                                 v-for="(tag, index) in updatePostForm.tags"
                                 :key="index"
@@ -660,7 +686,9 @@ watch(filter, (value) => {
                             </span>
                         </div>
                     </div>
-                    <InputError :message="updatePostForm.errors.tags" class="mt-2" />
+                    <InputError
+                        :message="updatePostForm.errors.tags"
+                        class="mt-2" />
                 </div>
 
                 <div class="mt-4">

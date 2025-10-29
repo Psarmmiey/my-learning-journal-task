@@ -5,7 +5,6 @@ defineProps({
     href: String,
     as: String,
     method: String,
-
 });
 </script>
 

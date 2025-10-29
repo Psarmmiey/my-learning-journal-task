@@ -1,33 +1,33 @@
 name: Deploy
 
 on:
-  push:
-    branches: [ staging ]
+    push:
+        branches: [staging]
 
 jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup SSH
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.3
-          tools: composer:v2
-          coverage: none
-      - name: Require Forge CLI
-        run: |
-          composer global require laravel/forge-cli
-          composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
-          npm ci && npm run build && rm -rf node_modules
-      - name: Deploy Site
-        run: |
-          forge server:switch wispy-geyser
-          forge deploy default
-        env:
-          FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+            - name: Setup SSH
+              uses: webfactory/ssh-agent@v0.9.0
+              with:
+                  ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: 8.3
+                  tools: composer:v2
+                  coverage: none
+            - name: Require Forge CLI
+              run: |
+                  composer global require laravel/forge-cli
+                  composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+                  npm ci && npm run build && rm -rf node_modules
+            - name: Deploy Site
+              run: |
+                  forge server:switch wispy-geyser
+                  forge deploy default
+              env:
+                  FORGE_API_TOKEN: ${{ secrets.FORGE_API_TOKEN }}

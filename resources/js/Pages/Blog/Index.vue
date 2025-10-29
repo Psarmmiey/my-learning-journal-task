@@ -47,7 +47,7 @@ const fetchBlogPosts = () => {
         },
         onSuccess: () => {
             blogPostsState.data.push(...props.blogPosts.data);
-           blogPostsState.meta = props.blogPosts.meta;
+            blogPostsState.meta = props.blogPosts.meta;
         },
     });
 };

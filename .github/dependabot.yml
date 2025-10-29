@@ -1,37 +1,37 @@
 version: 2
 updates:
-  - package-ecosystem: composer
-    open-pull-requests-limit: 20
-    directory: /
-    target-branch: main
-    schedule:
-      interval: weekly
-      day: friday
-      time: "00:00"
-      timezone: "Europe/London"
-    commit-message:
-      prefix: "chore/dependabot"
+    - package-ecosystem: composer
+      open-pull-requests-limit: 20
+      directory: /
+      target-branch: main
+      schedule:
+          interval: weekly
+          day: friday
+          time: '00:00'
+          timezone: 'Europe/London'
+      commit-message:
+          prefix: 'chore/dependabot'
 
-  - package-ecosystem: github-actions
-    open-pull-requests-limit: 10
-    directory: /
-    target-branch: main
-    schedule:
-      interval: weekly
-      day: friday
-      time: "00:00"
-      timezone: "Europe/London"
-    commit-message:
-      prefix: "chore/dependabot"
+    - package-ecosystem: github-actions
+      open-pull-requests-limit: 10
+      directory: /
+      target-branch: main
+      schedule:
+          interval: weekly
+          day: friday
+          time: '00:00'
+          timezone: 'Europe/London'
+      commit-message:
+          prefix: 'chore/dependabot'
 
-  - package-ecosystem: npm
-    open-pull-requests-limit: 10
-    directory: /
-    target-branch: main
-    schedule:
-      interval: weekly
-      day: friday
-      time: "00:00"
-      timezone: "Europe/London"
-    commit-message:
-      prefix: "chore/dependabot"
+    - package-ecosystem: npm
+      open-pull-requests-limit: 10
+      directory: /
+      target-branch: main
+      schedule:
+          interval: weekly
+          day: friday
+          time: '00:00'
+          timezone: 'Europe/London'
+      commit-message:
+          prefix: 'chore/dependabot'
