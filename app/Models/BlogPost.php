@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Services\MarkdownService;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Spatie\MediaLibrary\MediaCollections\Exceptions\FileDoesNotExist;
@@ -117,6 +118,25 @@ class BlogPost extends Model implements HasMedia
     public function scopePublished($query)
     {
         return $query->where('is_published', true)->whereNotNull('published_at');
+    }
+
+    /**
+     * Get the rendered HTML content from Markdown
+     */
+    public function getRenderedBodyAttribute(): string
+    {
+        return app(MarkdownService::class)->toHtml($this->body);
+    }
+
+    /**
+     * Get the rendered HTML excerpt from Markdown (if excerpt exists)
+     */
+    public function getRenderedExcerptAttribute(): string
+    {
+        if (!$this->excerpt) {
+            return '';
+        }
+        return app(MarkdownService::class)->toHtml($this->excerpt);
     }
 
     /**
