@@ -26,7 +26,7 @@ defineProps({
                     {{ formatDate(post.published_at) }}
                 </p>
                 <h3 class="my-2 text-xl font-bold">{{ post.title }}</h3>
-                <p class="mb-2 text-sm text-gray-700">{{ post.excerpt }}</p>
+                <div class="mb-2 text-sm text-gray-700 prose prose-sm" v-html="post.excerpt_html || post.excerpt"></div>
                 <TagDisplay :tags="post.tags" />
             </div>
         </div>

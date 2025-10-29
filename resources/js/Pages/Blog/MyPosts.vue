@@ -14,6 +14,7 @@ import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
 import TagInput from '@/Components/TagInput.vue';
 import TagDisplay from '@/Components/TagDisplay.vue';
+import MarkdownEditor from '@/Components/MarkdownEditor.vue';
 import { useRoute } from '@/helpers/ziggy.js';
 
 const props = defineProps({
@@ -380,16 +381,12 @@ watch(filter, (value) => {
                     <InputError :message="form.errors.title" class="mt-2" />
                 </div>
                 <div class="mt-4">
-                    <InputLabel for="excerpt" value="Excerpt" />
-                    <textarea
-                        id="excerpt"
-                        ref="excerptInput"
+                    <MarkdownEditor
                         v-model="form.excerpt"
-                        placeholder="Post Excerpt"
-                        type="text"
-                        rows="5"
-                        class="mt-1 block w-3/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
-                    <InputError :message="form.errors.excerpt" class="mt-2" />
+                        label="Excerpt"
+                        placeholder="Write a brief summary using Markdown..."
+                        :rows="4"
+                        :error-message="form.errors.excerpt" />
                 </div>
                 <div class="mt-4">
                     <InputLabel for="title" value="Cover Image" />
@@ -418,16 +415,12 @@ watch(filter, (value) => {
                     <InputError :message="form.errors.photo" class="mt-2" />
                 </div>
                 <div class="mt-4">
-                    <InputLabel for="body" value="Body" />
-                    <textarea
-                        id="body"
-                        ref="bodyInput"
+                    <MarkdownEditor
                         v-model="form.body"
-                        class="mt-1 block w-3/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        placeholder="Post Body"
-                        type="text"
-                        rows="5" />
-                    <InputError :message="form.errors.body" class="mt-2" />
+                        label="Content"
+                        placeholder="Write your blog content using Markdown..."
+                        :rows="12"
+                        :error-message="form.errors.body" />
                 </div>
 
                 <div class="mt-4">
@@ -509,18 +502,12 @@ watch(filter, (value) => {
                         class="mt-2" />
                 </div>
                 <div class="mt-4">
-                    <InputLabel for="excerpt" value="Excerpt" />
-                    <textarea
-                        id="excerpt"
-                        ref="excerptInput"
+                    <MarkdownEditor
                         v-model="updatePostForm.excerpt"
-                        placeholder="Post Excerpt"
-                        type="text"
-                        rows="5"
-                        class="mt-1 block w-3/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" />
-                    <InputError
-                        :message="updatePostForm.errors.excerpt"
-                        class="mt-2" />
+                        label="Excerpt"
+                        placeholder="Write a brief summary using Markdown..."
+                        :rows="4"
+                        :error-message="updatePostForm.errors.excerpt" />
                 </div>
                 <div class="mt-4">
                     <InputLabel for="title" value="Cover Image" />
@@ -560,18 +547,12 @@ watch(filter, (value) => {
                         class="mt-2" />
                 </div>
                 <div class="mt-4">
-                    <InputLabel for="body" value="Body" />
-                    <textarea
-                        id="body"
-                        ref="bodyInput"
+                    <MarkdownEditor
                         v-model="updatePostForm.body"
-                        class="mt-1 block w-3/4 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                        placeholder="Post Body"
-                        type="text"
-                        rows="5" />
-                    <InputError
-                        :message="updatePostForm.errors.body"
-                        class="mt-2" />
+                        label="Content"
+                        placeholder="Write your blog content using Markdown..."
+                        :rows="12"
+                        :error-message="updatePostForm.errors.body" />
                 </div>
 
                 <div class="mt-4">

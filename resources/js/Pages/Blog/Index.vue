@@ -95,9 +95,7 @@ defineOptions({
                     <h2 class="mb-4 text-4xl font-bold">
                         {{ featuredPost.data.title }}
                     </h2>
-                    <p class="mb-4 text-lg lg:break-words">
-                        {{ featuredPost.data.excerpt }}
-                    </p>
+                    <div class="mb-4 text-lg lg:break-words prose prose-lg text-white" v-html="featuredPost.data.excerpt_html || featuredPost.data.excerpt"></div>
                     <div class="text-white">
                         <TagDisplay :tags="featuredPost.data.tags" />
                     </div>

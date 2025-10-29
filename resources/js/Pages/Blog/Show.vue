@@ -31,9 +31,7 @@ defineProps({
                     <h2 class="mb-4 text-4xl font-bold">
                         {{ post.data.title }}
                     </h2>
-                    <p class="mb-4 text-lg lg:break-words">
-                        {{ post.data.excerpt }}
-                    </p>
+                    <div class="mb-4 text-lg lg:break-words prose prose-lg" v-html="post.data.excerpt_html || post.data.excerpt"></div>
                     <TagDisplay :tags="post.data.tags" />
                 </div>
             </div>
@@ -49,10 +47,7 @@ defineProps({
         <!-- Blog Posts -->
         <div class="container mx-auto px-4 py-12">
             <div class="prose lg:prose-xl mx-auto">
-                <section>
-                    <p>
-                        {{ post.data.body }}
-                    </p>
+                <section v-html="post.data.body_html || post.data.body">
                 </section>
             </div>
         </div>
