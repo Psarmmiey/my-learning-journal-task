@@ -12,6 +12,8 @@ import TextInput from '@/Components/TextInput.vue';
 import InputError from '@/Components/InputError.vue';
 import DialogModal from '@/Components/DialogModal.vue';
 import SecondaryButton from '@/Components/SecondaryButton.vue';
+import TagInput from '@/Components/TagInput.vue';
+import TagDisplay from '@/Components/TagDisplay.vue';
 import { useRoute } from '@/helpers/ziggy.js';
 
 const props = defineProps({
@@ -78,6 +80,7 @@ const form = useForm({
     is_published: false,
     is_featured: false,
     photo: null,
+    tags: [],
 });
 
 const updatePostForm = useForm({
@@ -87,6 +90,7 @@ const updatePostForm = useForm({
     is_published: false,
     is_featured: false,
     photo: null,
+    tags: [],
 });
 
 const statusClass = (status) => ({
@@ -117,18 +121,19 @@ const openEditPostModal = (post) => {
     updatePostForm.body = post.body;
     updatePostForm.is_published = post.is_published;
     updatePostForm.photo = post.image?.uuid;
+    updatePostForm.tags = post.tags || [];
     imagePreview.value = post.image.preview_url;
 };
 
 const closeCreatePostModal = () => {
     openCreatePost.value = false;
-    form.reset('photo', 'title', 'excerpt', 'body', 'is_published');
+    form.reset('photo', 'title', 'excerpt', 'body', 'is_published', 'tags');
 };
 
 const closeEditPostModal = () => {
     isEditModalOpen.value = false;
     postToEdit.value = null;
-    updatePostForm.reset('title', 'excerpt', 'body', 'is_published');
+    updatePostForm.reset('title', 'excerpt', 'body', 'is_published', 'tags');
 };
 
 const createBlog = () => {
@@ -139,7 +144,7 @@ const createBlog = () => {
         onSuccess: (page) => {
             closeCreatePostModal();
             postsState.data = page.props.blogPosts.data;
-            form.reset('photo', 'title', 'excerpt', 'body', 'is_published');
+            form.reset('photo', 'title', 'excerpt', 'body', 'is_published', 'tags');
         },
     });
 };
@@ -154,7 +159,7 @@ const updateBlog = () => {
         onSuccess: (page) => {
             closeEditPostModal();
             postsState.data = page.props.blogPosts.data;
-            updatePostForm.reset('title', 'excerpt', 'body', 'is_published');
+            updatePostForm.reset('title', 'excerpt', 'body', 'is_published', 'tags');
         },
     });
 };
@@ -251,8 +256,11 @@ watch(filter, (value) => {
                                             <h3 class="text-lg font-medium">
                                                 {{ post.title }}
                                             </h3>
-                                            <div class="text-gray-500">
+                                            <div class="mb-2 text-gray-500">
                                                 {{ post.excerpt }}
+                                            </div>
+                                            <div class="mb-2">
+                                                <TagDisplay :tags="post.tags" />
                                             </div>
                                             <div class="text-gray-500">
                                                 <span
@@ -423,6 +431,14 @@ watch(filter, (value) => {
                 </div>
 
                 <div class="mt-4">
+                    <TagInput 
+                        v-model="form.tags" 
+                        label="Tags" 
+                        placeholder="Enter tags separated by commas or press Enter"
+                        :error-message="form.errors.tags" />
+                </div>
+
+                <div class="mt-4">
                     <InputLabel for="status" value="Status" />
                     <select
                         id="status"
@@ -556,6 +572,14 @@ watch(filter, (value) => {
                     <InputError
                         :message="updatePostForm.errors.body"
                         class="mt-2" />
+                </div>
+
+                <div class="mt-4">
+                    <TagInput 
+                        v-model="updatePostForm.tags" 
+                        label="Tags" 
+                        placeholder="Enter tags separated by commas or press Enter"
+                        :error-message="updatePostForm.errors.tags" />
                 </div>
 
                 <div class="mt-4">

@@ -4,6 +4,7 @@ import BlogLayout from '@/Layouts/BlogLayout.vue';
 import { formatDate } from '@/helpers/format.js';
 import RecentPosts from '@/Components/BlogPost/RecentPosts.vue';
 import CommentSection from '@/Components/Comments/CommentSection.vue';
+import TagDisplay from '@/Components/TagDisplay.vue';
 
 defineProps({
     post: {
@@ -30,9 +31,10 @@ defineProps({
                     <h2 class="mb-4 text-4xl font-bold">
                         {{ post.data.title }}
                     </h2>
-                    <p class="text-lg lg:break-words">
+                    <p class="mb-4 text-lg lg:break-words">
                         {{ post.data.excerpt }}
                     </p>
+                    <TagDisplay :tags="post.data.tags" />
                 </div>
             </div>
         </div>

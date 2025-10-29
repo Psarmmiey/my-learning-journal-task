@@ -1,6 +1,10 @@
 <template>
-    <img
-        src="https://my-learning-blog.s3.us-east-1.amazonaws.com/image%2017.png"
-        alt="My learning journal"
-        class="h-9 w-auto" />
+    <div class="flex items-center space-x-2">
+        <div class="bg-blue-600 text-white rounded-lg px-3 py-2 font-bold text-lg">
+            MLJ
+        </div>
+        <span class="text-xl font-bold text-gray-800 dark:text-white">
+            My Learning Journal
+        </span>
+    </div>
 </template>

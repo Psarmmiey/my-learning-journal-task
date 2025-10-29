@@ -4,6 +4,7 @@ import PreviewPost from '@/Components/BlogPost/PreviewPost.vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import BlogLayout from '@/Layouts/BlogLayout.vue';
 import { formatDate } from '@/helpers/format.js';
+import TagDisplay from '@/Components/TagDisplay.vue';
 
 const props = defineProps({
     blogPosts: {
@@ -94,9 +95,12 @@ defineOptions({
                     <h2 class="mb-4 text-4xl font-bold">
                         {{ featuredPost.data.title }}
                     </h2>
-                    <p class="text-lg lg:break-words">
+                    <p class="mb-4 text-lg lg:break-words">
                         {{ featuredPost.data.excerpt }}
                     </p>
+                    <div class="text-white">
+                        <TagDisplay :tags="featuredPost.data.tags" />
+                    </div>
                 </div>
             </div>
         </div>

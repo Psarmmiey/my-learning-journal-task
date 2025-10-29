@@ -1,6 +1,7 @@
 <script setup>
 import { Link } from '@inertiajs/vue3';
 import { formatDate } from '@/helpers/format.js';
+import TagDisplay from '@/Components/TagDisplay.vue';
 
 defineProps({
     /**
@@ -25,7 +26,8 @@ defineProps({
                     {{ formatDate(post.published_at) }}
                 </p>
                 <h3 class="my-2 text-xl font-bold">{{ post.title }}</h3>
-                <p class="text-sm text-gray-700">{{ post.excerpt }}</p>
+                <p class="mb-2 text-sm text-gray-700">{{ post.excerpt }}</p>
+                <TagDisplay :tags="post.tags" />
             </div>
         </div>
     </Link>
