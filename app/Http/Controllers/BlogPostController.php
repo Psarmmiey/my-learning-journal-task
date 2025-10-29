@@ -12,6 +12,7 @@ use App\Models\BlogPost;
 use App\Services\BlogPostServices;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -40,7 +41,7 @@ class BlogPostController extends Controller
 
     public function myPosts(Request $request): Response
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $filter = $request->query('filter');
         $blogPosts = $this->blogPostServices
             ->myBlogPosts($user, $filter);
@@ -50,9 +51,9 @@ class BlogPostController extends Controller
         ]);
     }
 
-    public function store(CreateBlogPostRequest $request): void
+    public function store(CreateBlogPostRequest $request)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $this->authorize('create', BlogPost::class);
         
         $validated = $request->validated();
@@ -68,6 +69,8 @@ class BlogPostController extends Controller
         if (!empty($tags)) {
             $this->syncTags($post, $tags);
         }
+        
+        return response()->json(['success' => true], 200);
     }
 
     public function show(BlogPost $post): Response
@@ -99,7 +102,7 @@ class BlogPostController extends Controller
      * @throws FileDoesNotExist
      * @throws FileIsTooBig
      */
-    public function update(UpdateBlogPostRequest $request, BlogPost $post): void
+    public function update(UpdateBlogPostRequest $request, BlogPost $post)
     {
         Gate::authorize('update', $post);
 
@@ -119,6 +122,8 @@ class BlogPostController extends Controller
         if ($tags !== null) {
             $this->syncTags($post, $tags);
         }
+        
+        return response()->json(['success' => true], 200);
     }
 
     public function destroy(BlogPost $post): void

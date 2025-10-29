@@ -20,7 +20,7 @@ test('can create a blog post with tags', function () {
         'is_published' => true,
         'is_featured' => false,
         'tags' => $tagData,
-        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.jpg')
+        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.png')
     ]);
     
     $post = BlogPost::where('title', 'Test Post')->first();
@@ -63,7 +63,7 @@ test('tags are created automatically if they dont exist', function () {
         'is_published' => true,
         'is_featured' => false,
         'tags' => $nonExistentTags,
-        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.jpg')
+        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.png')
     ]);
     
     expect(Tag::whereIn('name', $nonExistentTags)->count())->toBe(2);
@@ -79,7 +79,7 @@ test('tag slugs are generated correctly', function () {
         'is_published' => true,
         'is_featured' => false,
         'tags' => [$tagName],
-        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.jpg')
+        'photo' => \Illuminate\Http\UploadedFile::fake()->image('test.png')
     ]);
     
     $tag = Tag::where('name', $tagName)->first();

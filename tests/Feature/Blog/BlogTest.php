@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Models\BlogPost;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 
 test('users can see blog posts', function () {
     $response = $this->get('/');
@@ -32,7 +33,7 @@ test('users can not see a non-existing blog post', function () {
 test('logged in users can create a blog post', function () {
     $user = User::factory()->create();
     Storage::fake('public');
-    $file = UploadedFile::fake()->image('image.jpg');
+    $file = UploadedFile::fake()->image('image.png');
 
     $response = $this
         ->actingAs($user)
