@@ -15,6 +15,7 @@
         "laravel/tinker": "^2.9",
         "laravel/vapor-cli": "^1.65",
         "laravel/vapor-core": "^2.37",
+        "spatie/laravel-comments": "^2.0",
         "spatie/laravel-medialibrary": "^11.7",
         "tightenco/ziggy": "^2.0",
         "fakerphp/faker": "^1.23"

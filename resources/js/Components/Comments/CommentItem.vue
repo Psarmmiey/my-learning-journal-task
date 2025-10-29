@@ -1,11 +1,11 @@
 <script setup>
-import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
-import { usePage } from '@inertiajs/vue3'
-import { formatDistanceToNow, parseISO } from 'date-fns'
-import CommentForm from './CommentForm.vue'
-import axios from 'axios'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
+import { formatDistanceToNow, parseISO } from 'date-fns';
+import CommentForm from './CommentForm.vue';
+import axios from 'axios';
 
-const page = usePage()
+const page = usePage();
 
 const props = defineProps({
     comment: {
@@ -15,150 +15,164 @@ const props = defineProps({
     blogPostId: {
         type: String,
         required: true,
-    }
-})
+    },
+});
 
-const emit = defineEmits(['comment-updated', 'comment-deleted', 'reply-added'])
+const emit = defineEmits(['comment-updated', 'comment-deleted', 'reply-added']);
 
 // Reactive data
-const isEditing = ref(false)
-const showReplyForm = ref(false)
-const editLoading = ref(false)
-const editErrors = ref({})
-const timeLeft = ref(0)
-const timeLeftInterval = ref(null)
+const isEditing = ref(false);
+const showReplyForm = ref(false);
+const editLoading = ref(false);
+const editErrors = ref({});
+const timeLeft = ref(0);
+const timeLeftInterval = ref(null);
 
 const editForm = reactive({
-    content: props.comment.content
-})
+    content: props.comment.content,
+});
 
 // Computed properties
 const canEdit = computed(() => {
-    return page.props.auth.user && 
-           page.props.auth.user.id === props.comment.user?.id && 
-           timeLeft.value > 0
-})
+    return (
+        page.props.auth.user &&
+        page.props.auth.user.id === props.comment.user?.id &&
+        timeLeft.value > 0
+    );
+});
 
 const canDelete = computed(() => {
-    return page.props.auth.user && 
-           page.props.auth.user.id === props.comment.user?.id
-})
+    return (
+        page.props.auth.user &&
+        page.props.auth.user.id === props.comment.user?.id
+    );
+});
 
 // Methods
 const formatDate = (dateString) => {
     try {
-        return formatDistanceToNow(parseISO(dateString), { addSuffix: true })
+        return formatDistanceToNow(parseISO(dateString), { addSuffix: true });
     } catch {
-        return dateString
+        return dateString;
     }
-}
+};
 
 const calculateTimeLeft = () => {
-    const createdAt = parseISO(props.comment.created_at)
-    const now = new Date()
-    const diffInMinutes = (now - createdAt) / (1000 * 60)
-    const remaining = Math.max(0, 15 - Math.floor(diffInMinutes))
-    timeLeft.value = remaining
-}
+    const createdAt = parseISO(props.comment.created_at);
+    const now = new Date();
+    const diffInMinutes = (now - createdAt) / (1000 * 60);
+    const remaining = Math.max(0, 15 - Math.floor(diffInMinutes));
+    timeLeft.value = remaining;
+};
 
 const startEdit = () => {
-    editForm.content = props.comment.content
-    isEditing.value = true
-    editErrors.value = {}
-}
+    editForm.content = props.comment.content;
+    isEditing.value = true;
+    editErrors.value = {};
+};
 
 const cancelEdit = () => {
-    isEditing.value = false
-    editForm.content = props.comment.content
-    editErrors.value = {}
-}
+    isEditing.value = false;
+    editForm.content = props.comment.content;
+    editErrors.value = {};
+};
 
 const saveEdit = async () => {
-    editLoading.value = true
-    editErrors.value = {}
+    editLoading.value = true;
+    editErrors.value = {};
 
     try {
         const response = await axios.patch(`/comments/${props.comment.id}`, {
-            content: editForm.content
-        })
-        
-        emit('comment-updated', response.data.data)
-        isEditing.value = false
+            content: editForm.content,
+        });
+
+        emit('comment-updated', response.data.data);
+        isEditing.value = false;
     } catch (error) {
         if (error.response?.status === 422) {
-            editErrors.value = error.response.data.errors || {}
+            editErrors.value = error.response.data.errors || {};
         } else if (error.response?.status === 403) {
-            editErrors.value = { content: 'You can only edit comments within 15 minutes of posting.' }
+            editErrors.value = {
+                content:
+                    'You can only edit comments within 15 minutes of posting.',
+            };
         } else {
-            editErrors.value = { content: 'Failed to update comment. Please try again.' }
+            editErrors.value = {
+                content: 'Failed to update comment. Please try again.',
+            };
         }
     } finally {
-        editLoading.value = false
+        editLoading.value = false;
     }
-}
+};
 
 const deleteComment = async () => {
     if (!confirm('Are you sure you want to delete this comment?')) {
-        return
+        return;
     }
 
     try {
-        await axios.delete(`/comments/${props.comment.id}`)
-        emit('comment-deleted', props.comment.id)
+        await axios.delete(`/comments/${props.comment.id}`);
+        emit('comment-deleted', props.comment.id);
     } catch (error) {
-        alert('Failed to delete comment. Please try again.')
-        console.error('Error deleting comment:', error)
+        alert('Failed to delete comment. Please try again.');
+        console.error('Error deleting comment:', error);
     }
-}
+};
 
 const toggleReply = () => {
-    showReplyForm.value = !showReplyForm.value
-}
+    showReplyForm.value = !showReplyForm.value;
+};
 
 const handleReplyAdded = (parentCommentId, newReply) => {
-    showReplyForm.value = false
-    emit('reply-added', parentCommentId, newReply)
-}
+    showReplyForm.value = false;
+    emit('reply-added', parentCommentId, newReply);
+};
 
 // Lifecycle
 onMounted(() => {
-    calculateTimeLeft()
+    calculateTimeLeft();
     // Update time left every minute
-    timeLeftInterval.value = setInterval(calculateTimeLeft, 60000)
-})
+    timeLeftInterval.value = setInterval(calculateTimeLeft, 60000);
+});
 
 onUnmounted(() => {
     // Clean up the interval to prevent memory leaks
     if (timeLeftInterval.value) {
-        clearInterval(timeLeftInterval.value)
+        clearInterval(timeLeftInterval.value);
     }
-})
+});
 </script>
 
 <template>
-    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg p-6">
+    <div
+        class="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-700 dark:bg-gray-900">
         <!-- Comment Header -->
         <div class="flex items-start space-x-4">
             <!-- User Avatar -->
             <div class="flex-shrink-0">
-                <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span class="text-white font-medium text-sm">
+                <div
+                    class="flex h-10 w-10 items-center justify-center rounded-full bg-blue-500">
+                    <span class="text-sm font-medium text-white">
                         {{ comment.user?.name?.charAt(0).toUpperCase() }}
                     </span>
                 </div>
             </div>
 
             <!-- Comment Content -->
-            <div class="flex-1 min-w-0">
+            <div class="min-w-0 flex-1">
                 <!-- User Info and Timestamp -->
-                <div class="flex items-center space-x-2 mb-2">
-                    <h4 class="text-sm font-medium text-gray-900 dark:text-white">
+                <div class="mb-2 flex items-center space-x-2">
+                    <h4
+                        class="text-sm font-medium text-gray-900 dark:text-white">
                         {{ comment.user?.name }}
                     </h4>
                     <span class="text-sm text-gray-500 dark:text-gray-400">
                         {{ formatDate(comment.created_at) }}
                     </span>
-                    <span v-if="comment.is_reply" class="text-xs px-2 py-1 bg-blue-100 text-blue-800 rounded">
+                    <span
+                        v-if="comment.is_reply"
+                        class="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
                         Reply
                     </span>
                 </div>
@@ -168,23 +182,22 @@ onUnmounted(() => {
                     <textarea
                         v-model="editForm.content"
                         rows="3"
-                        class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white"
-                    ></textarea>
-                    <div v-if="editErrors.content" class="mt-1 text-sm text-red-600">
+                        class="w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white"></textarea>
+                    <div
+                        v-if="editErrors.content"
+                        class="mt-1 text-sm text-red-600">
                         {{ editErrors.content }}
                     </div>
                     <div class="mt-2 flex space-x-2">
                         <button
                             @click="saveEdit"
                             :disabled="editLoading"
-                            class="px-3 py-1 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 disabled:opacity-50"
-                        >
+                            class="rounded bg-blue-600 px-3 py-1 text-sm text-white hover:bg-blue-700 disabled:opacity-50">
                             {{ editLoading ? 'Saving...' : 'Save' }}
                         </button>
                         <button
                             @click="cancelEdit"
-                            class="px-3 py-1 text-sm bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
-                        >
+                            class="rounded bg-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-400">
                             Cancel
                         </button>
                     </div>
@@ -192,7 +205,10 @@ onUnmounted(() => {
 
                 <!-- Comment Text (View Mode) -->
                 <div v-else class="mb-4">
-                    <p class="text-gray-900 dark:text-white whitespace-pre-wrap">{{ comment.content }}</p>
+                    <p
+                        class="whitespace-pre-wrap text-gray-900 dark:text-white">
+                        {{ comment.content }}
+                    </p>
                 </div>
 
                 <!-- Action Buttons -->
@@ -201,8 +217,7 @@ onUnmounted(() => {
                     <button
                         v-if="$page.props.auth.user && !isEditing"
                         @click="toggleReply"
-                        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    >
+                        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                         {{ showReplyForm ? 'Cancel' : 'Reply' }}
                     </button>
 
@@ -210,8 +225,7 @@ onUnmounted(() => {
                     <button
                         v-if="canEdit && !isEditing"
                         @click="startEdit"
-                        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
-                    >
+                        class="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
                         Edit
                     </button>
 
@@ -219,13 +233,14 @@ onUnmounted(() => {
                     <button
                         v-if="canDelete && !isEditing"
                         @click="deleteComment"
-                        class="text-sm text-red-500 hover:text-red-700"
-                    >
+                        class="text-sm text-red-500 hover:text-red-700">
                         Delete
                     </button>
 
                     <!-- Time left for editing -->
-                    <span v-if="canEdit && timeLeft > 0" class="text-xs text-gray-400">
+                    <span
+                        v-if="canEdit && timeLeft > 0"
+                        class="text-xs text-gray-400">
                         Edit available for {{ timeLeft }}m
                     </span>
                 </div>
@@ -238,13 +253,15 @@ onUnmounted(() => {
                         :parent-comment="comment"
                         :is-reply="true"
                         @reply-added="handleReplyAdded"
-                        @cancel-reply="toggleReply"
-                    />
+                        @cancel-reply="toggleReply" />
                 </div>
 
                 <!-- Replies -->
-                <div v-if="comment.replies && comment.replies.length > 0" class="mt-6 space-y-4">
-                    <div class="border-l-2 border-gray-200 dark:border-gray-600 pl-4">
+                <div
+                    v-if="comment.replies && comment.replies.length > 0"
+                    class="mt-6 space-y-4">
+                    <div
+                        class="border-l-2 border-gray-200 pl-4 dark:border-gray-600">
                         <CommentItem
                             v-for="reply in comment.replies"
                             :key="reply.id"
@@ -252,12 +269,10 @@ onUnmounted(() => {
                             :blog-post-id="blogPostId"
                             @comment-updated="$emit('comment-updated', $event)"
                             @comment-deleted="$emit('comment-deleted', $event)"
-                            @reply-added="$emit('reply-added', $event)"
-                        />
+                            @reply-added="$emit('reply-added', $event)" />
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </template>
-
