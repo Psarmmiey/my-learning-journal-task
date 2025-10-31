@@ -6,6 +6,7 @@ namespace App\Models;
 
 use App\Observers\BlogPostObserver;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Concerns\HasUlids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -29,7 +30,9 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @property string $title
  * @property string $slug
  * @property string|null $excerpt
- * @property string $body
+ * @property string $body_raw
+ * @property string $body_html
+ * @property-read string $body
  * @property bool $is_published
  * @property \Illuminate\Support\Carbon|null $published_at
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -45,7 +48,8 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost onlyTrashed()
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost query()
- * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereBodyRaw($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereBodyHtml($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereCreatedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereDeletedAt($value)
  * @method static \Illuminate\Database\Eloquent\Builder|BlogPost whereExcerpt($value)
@@ -73,12 +77,25 @@ class BlogPost extends Model implements HasMedia
         'title',
         'slug',
         'excerpt',
-        'body',
+        'body_raw',
+        'body_html',
         'published_at',
         'is_published',
         'is_featured',
         'user_id',
     ];
+
+    /**
+     * Get the blog post's body for display.
+     *
+     * This accessor provides backward compatibility by returning the sanitized HTML content.
+     */
+    protected function body(): Attribute
+    {
+        return Attribute::get(
+            fn (): string => $this->body_html ?? ''
+        );
+    }
 
     /**
      * @return BelongsTo<User>
